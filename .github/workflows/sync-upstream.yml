@@ -1,0 +1,76 @@
+name: Sync upstream
+
+on:
+  schedule:
+    # 每天 UTC 2:00（北京时间 10:00）检查上游更新
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  issues: write
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Configure git
+        run: |
+          git config user.name "rkdawn"
+          git config user.email "rkemail@163.com"
+
+      - name: Merge upstream/main
+        id: merge
+        continue-on-error: true
+        run: |
+          git remote add upstream https://github.com/Rainy-C/Mtforum.git
+          git fetch upstream main
+          git merge upstream/main --no-edit
+
+      - name: Push (fast path)
+        if: steps.merge.outcome == 'success'
+        run: |
+          if git rev-parse HEAD >/dev/null 2>&1 && git log -1 --format=%P | grep -q ' '; then
+            git push origin main
+          else
+            echo '上游无新提交，跳过推送'
+          fi
+
+      - name: Open issue on conflict
+        if: steps.merge.outcome == 'failure'
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const existing = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              labels: 'upstream-sync',
+            });
+            if (existing.data.length === 0) {
+              await github.rest.issues.create({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                labels: ['upstream-sync'],
+                title: '上游同步失败：合并冲突，需要手动处理',
+                body: [
+                  '上游 `Rainy-C/Mtforum/main` 有新提交，自动 merge 与定制改动冲突。',
+                  '',
+                  '本地处理方式：',
+                  '```bash',
+                  'git remote add upstream https://github.com/Rainy-C/Mtforum.git',
+                  'git fetch upstream',
+                  'git merge upstream/main',
+                  '# 解决冲突（重点检查 thread_detail_page.dart / app_typography.dart / thread_card.dart）',
+                  'git push origin main',
+                  '```',
+                  '定制改动清单见仓库根目录 `CUSTOMIZATION.md`。'
+                ].join('\n')
+              });
+            }
