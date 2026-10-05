@@ -185,7 +185,7 @@ class _SearchPageState extends State<SearchPage> {
                               text: '“$_keyword”',
                               style: TextStyle(
                                 color: colors.primary,
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             TextSpan(

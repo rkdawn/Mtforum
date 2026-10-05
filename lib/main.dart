@@ -502,7 +502,7 @@ class _NavigationBadge extends StatelessWidget {
           color: colors.onError,
           fontSize: 10,
           height: 1,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           leadingDistribution: TextLeadingDistribution.even,
         ),
       ),

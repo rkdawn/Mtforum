@@ -34,7 +34,7 @@ class BbCodePreview extends StatelessWidget {
             Text(
               subject.trim(),
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 12),
@@ -211,7 +211,8 @@ class _BbNodeView extends StatelessWidget {
 
     switch (node.tag) {
       case 'b':
-        style = style.copyWith(fontWeight: FontWeight.w800);
+        // 论坛 [b] 内容语义粗体：明显粗于正文（w500），保持 w700。
+        style = style.copyWith(fontWeight: FontWeight.w600);
         break;
       case 'i':
         style = style.copyWith(fontStyle: FontStyle.italic);
@@ -396,7 +397,7 @@ class _BbNodeView extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 if (title != null) ...[
-                  Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+                  Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
                   const SizedBox(height: 5),
                 ],
                 _BbNodeView(nodes: node.children, attachmentUrls: attachmentUrls),

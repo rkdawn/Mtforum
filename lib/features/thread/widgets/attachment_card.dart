@@ -68,7 +68,7 @@ class _AttachmentCard extends StatelessWidget {
                   name,
                   maxLines: 2,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 if (url != null && url!.isNotEmpty) ...[
@@ -134,7 +134,7 @@ class _MediaCard extends StatelessWidget {
                 Text(
                   title,
                   style: theme.textTheme.bodyMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const SizedBox(height: 2),

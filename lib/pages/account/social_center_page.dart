@@ -63,7 +63,7 @@ class _SocialCenterPageState extends State<SocialCenterPage> {
             labelPadding: EdgeInsets.zero,
             labelStyle: TextStyle(
               fontSize: 13.5,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
             unselectedLabelStyle: TextStyle(
               fontSize: 13.5,
@@ -551,7 +551,7 @@ class _FriendRequestListState extends State<_FriendRequestList> {
                 child: Text(
                   '通过 ${item.username} 的好友申请',
                   style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
               ),
@@ -628,7 +628,7 @@ class _FriendRequestListState extends State<_FriendRequestList> {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -647,7 +647,7 @@ class _FriendRequestListState extends State<_FriendRequestList> {
                                 '在线',
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: colors.onTertiaryContainer,
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),

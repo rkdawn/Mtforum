@@ -166,7 +166,7 @@ class _MallPageState extends State<MallPage> {
                             : '可浏览商城；兑换商品需要先登录',
                         style: theme.textTheme.bodyMedium?.copyWith(
                           color: colors.onSecondaryContainer,
-                          fontWeight: FontWeight.w600,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                     ),

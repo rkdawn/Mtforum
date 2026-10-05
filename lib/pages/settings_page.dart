@@ -341,14 +341,14 @@ class _SettingsPageState extends State<SettingsPage> {
                               const Expanded(
                                 child: Text(
                                   '文字大小',
-                                  style: TextStyle(fontWeight: FontWeight.w600),
+                                  style: TextStyle(fontWeight: FontWeight.w500),
                                 ),
                               ),
                               Text(
                                 '${(_theme.textScale * 100).round()}%',
                                 style: TextStyle(
                                   color: colors.primary,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                               const SizedBox(width: 4),
@@ -595,7 +595,7 @@ class _SectionTitle extends StatelessWidget {
         text,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: Theme.of(context).colorScheme.onSurface,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
       ),
     );

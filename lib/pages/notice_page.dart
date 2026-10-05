@@ -444,7 +444,7 @@ class _NoticePageState extends State<NoticePage>
               Text(
                 '屏蔽此类通知',
                 style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
               const SizedBox(height: 10),

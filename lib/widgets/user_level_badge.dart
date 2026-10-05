@@ -35,7 +35,7 @@ class UserLevelBadge extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
           color: style.foreground,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           height: 1.1,
         ),
       ),

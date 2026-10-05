@@ -89,7 +89,7 @@ class _RanklistPageState extends State<RanklistPage>
                   Text(
                     '排行榜',
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const Spacer(),
@@ -120,7 +120,7 @@ class _RanklistPageState extends State<RanklistPage>
                 labelColor: colors.onPrimaryContainer,
                 unselectedLabelColor: colors.onSurfaceVariant,
                 labelStyle: const TextStyle(
-                    fontWeight: FontWeight.w600, fontSize: 13),
+                    fontWeight: FontWeight.w500, fontSize: 13),
                 tabs: [
                   for (final t in _tabs)
                     Padding(
@@ -258,7 +258,7 @@ class _TopRankCard extends StatelessWidget {
                           '${item.rank}',
                           style: theme.textTheme.headlineSmall?.copyWith(
                             color: accent,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                             height: 0.95,
                           ),
                         ),
@@ -266,7 +266,7 @@ class _TopRankCard extends StatelessWidget {
                           '名',
                           style: theme.textTheme.labelSmall?.copyWith(
                             color: accent,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -300,7 +300,7 @@ class _TopRankCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.titleMedium?.copyWith(
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -329,7 +329,7 @@ class _TopRankCard extends StatelessWidget {
                                 label,
                                 style: theme.textTheme.labelSmall?.copyWith(
                                   color: accent,
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -340,7 +340,7 @@ class _TopRankCard extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.bodySmall?.copyWith(
                                   color: colors.onSurfaceVariant,
-                                  fontWeight: FontWeight.w600,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                           ],
@@ -396,7 +396,7 @@ class _RegularRankCard extends StatelessWidget {
                 textAlign: TextAlign.center,
                 style: theme.textTheme.labelLarge?.copyWith(
                   color: colors.primary,
-                  fontWeight: FontWeight.w900,
+                  fontWeight: FontWeight.w600,
                 ),
               ),
             ),
@@ -412,7 +412,7 @@ class _RegularRankCard extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -430,7 +430,7 @@ class _RegularRankCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodySmall?.copyWith(
                   color: colors.secondary,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
         trailing: const Icon(Icons.chevron_right_rounded),
@@ -463,7 +463,7 @@ class _RankAvatar extends StatelessWidget {
         initial,
         style: TextStyle(
           color: colors.onSurfaceVariant,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

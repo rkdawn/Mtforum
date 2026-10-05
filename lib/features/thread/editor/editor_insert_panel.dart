@@ -256,7 +256,7 @@ class _AttachmentPanel extends StatelessWidget {
             Text(
               '已上传 ${attachments.length} 张',
               style: Theme.of(context).textTheme.labelLarge?.copyWith(
-                    fontWeight: FontWeight.w600,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
             const SizedBox(height: 8),
@@ -332,7 +332,7 @@ class _AttachmentItem extends StatelessWidget {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                 ),
                 const SizedBox(height: 3),

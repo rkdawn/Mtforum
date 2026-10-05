@@ -483,7 +483,7 @@ class _ProfileHeader extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 7),
@@ -631,7 +631,7 @@ class _StatItem extends StatelessWidget {
                     value?.toString() ?? '-',
                     maxLines: 1,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   if (onTap != null) ...[
@@ -866,7 +866,7 @@ class _CreditItem extends StatelessWidget {
             value?.toString() ?? '-',
             style: Theme.of(context).textTheme.titleSmall?.copyWith(
               color: colors.primary,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
           Text(label, style: Theme.of(context).textTheme.labelSmall),
@@ -896,7 +896,7 @@ class _Section extends StatelessWidget {
             child: Text(
               title,
               style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

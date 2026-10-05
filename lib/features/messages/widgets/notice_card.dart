@@ -75,7 +75,7 @@ class _NoticeCard extends StatelessWidget {
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                                 style: theme.textTheme.titleSmall?.copyWith(
-                                  fontWeight: FontWeight.w800,
+                                  fontWeight: FontWeight.w500,
                                 ),
                               ),
                             ),
@@ -165,7 +165,7 @@ class _NoticeCard extends StatelessWidget {
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.labelLarge?.copyWith(
                             color: colors.primary,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -294,7 +294,7 @@ class _NoticeReplyPreview extends StatelessWidget {
                   imageCount == 1 ? '含图片' : '含 $imageCount 张图片',
                   style: theme.textTheme.labelSmall?.copyWith(
                     color: colors.primary,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],
@@ -393,7 +393,7 @@ class _NoticeEmptyState extends StatelessWidget {
             Text(
               title,
               style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w800,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 6),

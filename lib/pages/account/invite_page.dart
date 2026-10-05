@@ -84,7 +84,7 @@ class _InvitePageState extends State<InvitePage> {
                               _data?.message ?? '未知状态',
                               textAlign: TextAlign.center,
                               style: theme.textTheme.titleMedium?.copyWith(
-                                fontWeight: FontWeight.w800,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                             if (_data?.canInvite == true) ...[

@@ -205,9 +205,7 @@ class _ReplySheetState extends State<_ReplySheet> {
                               : '回复帖子',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
+                          style: theme.textTheme.titleMedium,
                         ),
                       ),
                       IconButton(
@@ -273,16 +271,8 @@ class _ReplySheetState extends State<_ReplySheet> {
                       ),
                       const SizedBox(width: 8),
                       Expanded(
-                        child: Text(
-                          _showSmileys
-                              ? '点击表情插入到当前光标位置'
-                              : '支持 QQ / COMCOM 表情',
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colors.outline,
-                          ),
-                        ),
+                        // 不放任何提示文案：表情支持与插入方式在面板里自明。
+                        child: const SizedBox.shrink(),
                       ),
                       const SizedBox(width: 8),
                       FilledButton.icon(

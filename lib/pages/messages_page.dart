@@ -221,7 +221,7 @@ class _MessageEntryCard extends StatelessWidget {
                     Text(
                       title,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const SizedBox(height: 4),
@@ -289,7 +289,7 @@ class _CountBadge extends StatelessWidget {
           color: colors.onError,
           fontSize: 11,
           height: 1,
-          fontWeight: FontWeight.w800,
+          fontWeight: FontWeight.w500,
           leadingDistribution: TextLeadingDistribution.even,
         ),
       ),

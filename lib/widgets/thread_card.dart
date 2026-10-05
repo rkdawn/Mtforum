@@ -69,7 +69,8 @@ class ThreadCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        // 不再叠加 w800 特粗，跟随主题 titleMedium（16px/w600）：
+                        // 加粗但不黑压压。
                         height: 1.30,
                         letterSpacing: 0.05,
                       ),
@@ -122,7 +123,7 @@ class ThreadCard extends StatelessWidget {
                             _initial(thread.authorName),
                             style: theme.textTheme.labelSmall?.copyWith(
                               color: colors.onSecondaryContainer,
-                              fontWeight: FontWeight.w800,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                   ),
@@ -139,7 +140,7 @@ class ThreadCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: colors.onSurfaceVariant,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -161,7 +162,7 @@ class ThreadCard extends StatelessWidget {
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.labelSmall?.copyWith(
                                 color: colors.onPrimaryContainer,
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -328,7 +329,7 @@ class _QuestionTypeBadge extends StatelessWidget {
               color: solved
                   ? colors.onSecondaryContainer
                   : colors.onPrimaryContainer,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
               height: 1.0,
             ),
           ),
@@ -364,7 +365,7 @@ class _HiddenBadge extends StatelessWidget {
             '隐藏',
             style: theme.textTheme.labelSmall?.copyWith(
               color: colors.onTertiaryContainer,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -407,7 +408,7 @@ class _Stat extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: theme.textTheme.labelSmall?.copyWith(
                 color: colors.onSurfaceVariant,
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

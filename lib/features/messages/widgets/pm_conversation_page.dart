@@ -345,7 +345,7 @@ class _PmConversationPageState extends State<PmConversationPage> {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleLarge?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -370,7 +370,7 @@ class _PmConversationPageState extends State<PmConversationPage> {
                   color: peerOnline
                       ? const Color(0xFF35C46A)
                       : colors.outline,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ],

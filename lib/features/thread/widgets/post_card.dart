@@ -153,7 +153,7 @@ class _PostCard extends StatelessWidget {
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               style: theme.textTheme.bodyMedium?.copyWith(
-                                fontWeight: FontWeight.w700,
+                                fontWeight: FontWeight.w500,
                               ),
                             ),
                           ),
@@ -190,7 +190,7 @@ class _PostCard extends StatelessWidget {
                                   _floorText(post.floor),
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: colors.outline,
-                                    fontWeight: FontWeight.w600,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               if (editLabel.isNotEmpty)
@@ -254,7 +254,11 @@ class _PostCard extends StatelessWidget {
                 enabled: compactFloor && content.length > _collapseThreshold,
                 child: SelectableText(
                   content,
-                  style: theme.textTheme.bodyMedium?.copyWith(height: 1.55),
+                  // 与 _InlineRichText 的正文保持一致（20px）。
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    fontSize: 20,
+                    height: 1.6,
+                  ),
                 ),
               ),
             ],
@@ -490,7 +494,7 @@ class _ReplyContextStrip extends StatelessWidget {
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.labelMedium?.copyWith(
                         color: colors.primary,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     if (previewText.isNotEmpty) ...[
@@ -621,7 +625,7 @@ class _Pill extends StatelessWidget {
         text,
         style: Theme.of(context).textTheme.labelSmall?.copyWith(
               color: primary ? colors.onPrimaryContainer : colors.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
       ),
     );

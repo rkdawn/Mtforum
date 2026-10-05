@@ -342,7 +342,7 @@ class _RichQuoteBlock extends StatelessWidget {
             firstText.isEmpty ? '本帖隐藏的内容:' : firstText,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: colors.tertiary,
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
           if (body.isNotEmpty) ...[
@@ -422,7 +422,12 @@ class _InlineRichTextState extends State<_InlineRichText> {
 
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
-    final baseStyle = theme.textTheme.bodyMedium?.copyWith(height: 1.55);
+    // 正文 20px：帖子页是长文阅读场景，高分屏上 14.5/16px 都明显偏小；
+    // 引用块等次级内容仍用 bodyMedium。
+    final baseStyle = theme.textTheme.bodyLarge?.copyWith(
+      fontSize: 20,
+      height: 1.6,
+    );
     final spans = <InlineSpan>[];
 
     TextStyle? contentStyle(PostContent content, {bool link = false}) {
@@ -435,7 +440,8 @@ class _InlineRichTextState extends State<_InlineRichText> {
         color: parsedColor ?? (link ? colors.primary : null),
         backgroundColor: parsedBackground,
         fontWeight: content.isBold || content.type == PostContentType.bold
-            ? FontWeight.w700
+            // 论坛 [b] 内容语义粗体：明显粗于正文（w500），保持 w700。
+            ? FontWeight.w600
             : null,
         fontStyle: content.isItalic ? FontStyle.italic : null,
         decoration: decorations.isEmpty

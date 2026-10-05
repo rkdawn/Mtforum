@@ -52,7 +52,7 @@ class _MallCard extends StatelessWidget {
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.titleSmall?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     const Spacer(),
@@ -70,7 +70,7 @@ class _MallCard extends StatelessWidget {
                               : '${item.priceGold} 金币',
                           style: theme.textTheme.titleSmall?.copyWith(
                             color: colors.tertiary,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ],
@@ -123,7 +123,7 @@ class _MallInfoItem extends StatelessWidget {
           text,
           style: theme.textTheme.bodySmall?.copyWith(
             color: colors.onSurfaceVariant,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -184,7 +184,7 @@ class _MallCardStatusDialog extends StatelessWidget {
                         Text(
                           '卡密记录',
                           style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         if (!status.isEmpty) ...[
@@ -261,7 +261,7 @@ class _MallCardEmptyState extends StatelessWidget {
           Text(
             '暂无卡密记录',
             style: theme.textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 5),
@@ -321,7 +321,7 @@ class _MallCardPurchaseTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                 ),
@@ -340,7 +340,7 @@ class _MallCardPurchaseTile extends StatelessWidget {
                       purchase.status!,
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: colors.onSecondaryContainer,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -427,7 +427,7 @@ class _MallCardPurchaseTile extends StatelessWidget {
                               child: SelectableText(
                                 record.card,
                                 style: theme.textTheme.bodyLarge?.copyWith(
-                                  fontWeight: FontWeight.w700,
+                                  fontWeight: FontWeight.w500,
                                   letterSpacing: 0.2,
                                 ),
                               ),
@@ -460,7 +460,7 @@ class _MallCardPurchaseTile extends StatelessWidget {
                                     record.status!,
                                     style: theme.textTheme.bodySmall?.copyWith(
                                       color: colors.primary,
-                                      fontWeight: FontWeight.w700,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                               ],

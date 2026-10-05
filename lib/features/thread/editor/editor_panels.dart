@@ -33,7 +33,7 @@ class _ForumHeader extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: Theme.of(context).textTheme.labelLarge?.copyWith(
                       color: colors.onPrimaryContainer,
-                      fontWeight: FontWeight.w800,
+                      fontWeight: FontWeight.w500,
                     ),
               ),
             ),
@@ -73,7 +73,7 @@ class _ThreadTypeSelector extends StatelessWidget {
             Text(
               '主题分类',
               style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(width: 12),
@@ -185,7 +185,7 @@ class _ModeButton extends StatelessWidget {
               label,
               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                     color: foreground,
-                    fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+                    fontWeight: selected ? FontWeight.w500 : FontWeight.w400,
                   ),
             ),
           ],

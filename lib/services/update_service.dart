@@ -315,7 +315,7 @@ Future<void> showUpdateDialog(
                           '发现新版本',
                           style: theme.textTheme.titleLarge?.copyWith(
                             color: colors.onPrimaryContainer,
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 3),
@@ -381,7 +381,7 @@ Future<void> showUpdateDialog(
                         child: Text(
                           '本次更新',
                           style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -399,7 +399,7 @@ Future<void> showUpdateDialog(
                             _formatUpdateSize(info.size!),
                             style: theme.textTheme.labelMedium?.copyWith(
                               color: colors.onSurfaceVariant,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -454,7 +454,7 @@ Future<void> showUpdateDialog(
                                                 ?.copyWith(
                                               color:
                                                   colors.onPrimaryContainer,
-                                              fontWeight: FontWeight.w800,
+                                              fontWeight: FontWeight.w500,
                                             ),
                                           ),
                                         ),
@@ -576,7 +576,7 @@ class _UpdateVersionCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
             style: theme.textTheme.titleSmall?.copyWith(
               color: emphasized ? colors.primary : colors.onSurface,
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],

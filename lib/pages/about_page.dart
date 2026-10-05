@@ -161,7 +161,7 @@ class _AboutPageState extends State<AboutPage> {
           'MT论坛',
           textAlign: TextAlign.center,
           style: theme.textTheme.headlineSmall?.copyWith(
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
         ),
         const SizedBox(height: 4),
@@ -313,7 +313,7 @@ class _AboutPageState extends State<AboutPage> {
               _authorName,
               textAlign: TextAlign.center,
               style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 6),
@@ -327,7 +327,7 @@ class _AboutPageState extends State<AboutPage> {
                 'MT论坛 · $_forumName',
                 style: theme.textTheme.labelMedium?.copyWith(
                   color: colors.onSecondaryContainer,
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -357,7 +357,7 @@ class _AboutPageState extends State<AboutPage> {
             Text(
               '技能',
               style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
             const SizedBox(height: 14),
@@ -457,7 +457,7 @@ class _GlobalStatChip extends StatelessWidget {
           Text(
             '$label $value',
             style: theme.textTheme.labelMedium?.copyWith(
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -518,7 +518,7 @@ class _ContactRow extends StatelessWidget {
                     Text(
                       value,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w600,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ],
@@ -556,7 +556,7 @@ class _SkillBar extends StatelessWidget {
               child: Text(
                 label,
                 style: theme.textTheme.bodyMedium?.copyWith(
-                  fontWeight: FontWeight.w600,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -564,7 +564,7 @@ class _SkillBar extends StatelessWidget {
               '$percent%',
               style: theme.textTheme.labelLarge?.copyWith(
                 color: colors.primary,
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -595,7 +595,7 @@ class _SectionTitle extends StatelessWidget {
         title,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.titleMedium?.copyWith(
-              fontWeight: FontWeight.w700,
+              fontWeight: FontWeight.w500,
             ),
       ),
     );

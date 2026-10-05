@@ -84,7 +84,7 @@ class _UserGroupPageState extends State<UserGroupPage> {
             child: Text(
               '当前权限',
               style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
             ),
           ),
@@ -165,7 +165,7 @@ class _LevelCard extends StatelessWidget {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       if (data.currentLevel.isNotEmpty)
@@ -175,7 +175,7 @@ class _LevelCard extends StatelessWidget {
                             data.currentLevel,
                             style: theme.textTheme.bodyMedium?.copyWith(
                               color: colors.primary,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                         ),
@@ -216,7 +216,7 @@ class _LevelCard extends StatelessWidget {
                   '${(progress * 100).round()}%',
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: colors.primary,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const Spacer(),
@@ -278,7 +278,7 @@ class _PermissionRow extends StatelessWidget {
             permission.value,
             style: theme.textTheme.bodyMedium?.copyWith(
               color: allowed ? colors.primary : colors.onSurfaceVariant,
-              fontWeight: FontWeight.w600,
+              fontWeight: FontWeight.w500,
             ),
           ),
         ],
@@ -304,7 +304,7 @@ class _PermissionRow extends StatelessWidget {
             child: Text(
               permission.name,
               style: theme.textTheme.bodyMedium?.copyWith(
-                fontWeight: FontWeight.w600,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ),

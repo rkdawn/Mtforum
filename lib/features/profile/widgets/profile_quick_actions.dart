@@ -31,7 +31,7 @@ class _LoggedOutView extends StatelessWidget {
           Text(
             '登录 MT论坛',
             style: theme.textTheme.titleLarge?.copyWith(
-              fontWeight: FontWeight.w800,
+              fontWeight: FontWeight.w500,
             ),
           ),
           const SizedBox(height: 7),
@@ -149,7 +149,7 @@ class _QuickAction extends StatelessWidget {
             Text(
               label,
               style: theme.textTheme.labelLarge?.copyWith(
-                fontWeight: FontWeight.w700,
+                fontWeight: FontWeight.w500,
               ),
             ),
           ],
@@ -171,7 +171,7 @@ class _SectionTitle extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: Theme.of(context).textTheme.titleSmall?.copyWith(
-          fontWeight: FontWeight.w900,
+          fontWeight: FontWeight.w600,
         ),
       ),
     );
@@ -231,7 +231,7 @@ class _MenuEntry extends StatelessWidget {
         alignment: Alignment.center,
         child: Icon(icon, size: 20, color: colors.onPrimaryContainer),
       ),
-      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w700)),
+      title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),
       trailing: Icon(Icons.chevron_right_rounded, color: colors.outline),
     );

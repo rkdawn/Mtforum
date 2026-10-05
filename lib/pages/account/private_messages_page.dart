@@ -139,7 +139,7 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          fontWeight: FontWeight.w700,
+                          fontWeight: FontWeight.w500,
                         ),
                       ),
                       subtitle: Text(
@@ -150,7 +150,7 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
                         overflow: TextOverflow.ellipsis,
                         style: TextStyle(
                           fontWeight: item.hasUnread
-                              ? FontWeight.w700
+                              ? FontWeight.w500
                               : FontWeight.normal,
                           color: item.hasUnread
                               ? colors.onSurface
@@ -165,7 +165,7 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
                                         ? colors.primary
                                         : colors.outline,
                                     fontWeight: item.hasUnread
-                                        ? FontWeight.w700
+                                        ? FontWeight.w500
                                         : FontWeight.normal,
                                   ),
                             )

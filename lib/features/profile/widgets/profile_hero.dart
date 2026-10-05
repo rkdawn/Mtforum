@@ -34,7 +34,7 @@ class _ProfileHero extends StatelessWidget {
                       username.substring(0, 1),
                       style: theme.textTheme.headlineSmall?.copyWith(
                         color: colors.onPrimaryContainer,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
             ),
@@ -51,7 +51,7 @@ class _ProfileHero extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                   textAlign: TextAlign.center,
                   style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.w900,
+                    fontWeight: FontWeight.w600,
                   ),
                 ),
                 if (profile.userGroup?.trim().isNotEmpty == true)
@@ -68,7 +68,7 @@ class _ProfileHero extends StatelessWidget {
                       profile.userGroup!.trim(),
                       style: theme.textTheme.labelSmall?.copyWith(
                         color: colors.onPrimaryContainer,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -127,7 +127,7 @@ class _MiniValue extends StatelessWidget {
           text,
           style: Theme.of(context).textTheme.labelMedium?.copyWith(
             color: colors.onSurfaceVariant,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ],
@@ -209,7 +209,7 @@ class _StatAction extends StatelessWidget {
             Text(
               value,
               style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w900,
+                fontWeight: FontWeight.w600,
               ),
             ),
             const SizedBox(height: 2),

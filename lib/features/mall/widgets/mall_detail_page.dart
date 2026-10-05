@@ -208,7 +208,7 @@ class _MallDetailPageState extends State<MallDetailPage> {
                         Text(
                           _detail!.title,
                           style: theme.textTheme.headlineSmall?.copyWith(
-                            fontWeight: FontWeight.w800,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         const SizedBox(height: 14),
@@ -236,7 +236,7 @@ class _MallDetailPageState extends State<MallDetailPage> {
                                   style:
                                       theme.textTheme.titleMedium?.copyWith(
                                     color: colors.tertiary,
-                                    fontWeight: FontWeight.w800,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                                 const Spacer(),
@@ -273,7 +273,7 @@ class _MallDetailPageState extends State<MallDetailPage> {
                                   Text(
                                     '兑换信息',
                                     style: theme.textTheme.titleSmall?.copyWith(
-                                      fontWeight: FontWeight.w800,
+                                      fontWeight: FontWeight.w500,
                                     ),
                                   ),
                                   const SizedBox(height: 10),
@@ -347,7 +347,7 @@ class _MallDetailPageState extends State<MallDetailPage> {
                                         style:
                                             theme.textTheme.titleSmall?.copyWith(
                                           color: colors.onTertiaryContainer,
-                                          fontWeight: FontWeight.w800,
+                                          fontWeight: FontWeight.w500,
                                         ),
                                       ),
                                       const SizedBox(height: 4),

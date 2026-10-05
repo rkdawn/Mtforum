@@ -884,9 +884,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                                         true
                                     ? '已定位到回复'
                                     : '评论区',
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.w800,
-                            ),
+                            style: theme.textTheme.titleMedium,
                           ),
                           Text(
                             _showFilteredComments
@@ -978,7 +976,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
                             _showFilteredComments ? '返回评论' : '查看',
                             style: theme.textTheme.labelLarge?.copyWith(
                               color: colors.primary,
-                              fontWeight: FontWeight.w700,
+                              fontWeight: FontWeight.w500,
                             ),
                           ),
                           const SizedBox(width: 2),

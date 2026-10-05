@@ -134,7 +134,7 @@ class _HomePageState extends State<HomePage> {
             onlineUsers == null ? '-- 在线' : '$onlineUsers 在线',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
                   color: colors.onPrimaryContainer,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
           ),
         ],
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                                   item.label,
                                   style: TextStyle(
                                     fontWeight: item == _sort
-                                        ? FontWeight.w700
+                                        ? FontWeight.w500
                                         : FontWeight.w500,
                                   ),
                                 ),

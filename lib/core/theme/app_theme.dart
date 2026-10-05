@@ -87,7 +87,7 @@ abstract final class AppTheme {
             fontSize: 12,
             height: 1.2,
             fontWeight: states.contains(WidgetState.selected)
-                ? FontWeight.w700
+                ? FontWeight.w500
                 : FontWeight.w500,
             color: states.contains(WidgetState.selected)
                 ? scheme.onSurface

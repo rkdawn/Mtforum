@@ -142,7 +142,7 @@ class _RenameHero extends StatelessWidget {
                       Text(
                         title,
                         style: theme.textTheme.titleLarge?.copyWith(
-                          fontWeight: FontWeight.w900,
+                          fontWeight: FontWeight.w600,
                         ),
                       ),
                       const SizedBox(height: 3),
@@ -173,7 +173,7 @@ class _RenameHero extends StatelessWidget {
                     '$cost 金币 / 次',
                     style: theme.textTheme.titleMedium?.copyWith(
                       color: accent,
-                      fontWeight: FontWeight.w900,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ],
@@ -252,7 +252,7 @@ class _InfoCard extends StatelessWidget {
                 Text(
                   '说明',
                   style: theme.textTheme.titleMedium?.copyWith(
-                    fontWeight: FontWeight.w800,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
               ],

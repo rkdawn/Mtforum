@@ -597,7 +597,7 @@ class _ThreadEditorPageState extends State<ThreadEditorPage> {
                       '发帖预览',
                       style: TextStyle(
                         fontSize: 18,
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                   ),
@@ -707,7 +707,7 @@ class _ThreadEditorPageState extends State<ThreadEditorPage> {
                                 style: Theme.of(context)
                                     .textTheme
                                     .titleMedium
-                                    ?.copyWith(fontWeight: FontWeight.w800),
+                                    ?.copyWith(fontWeight: FontWeight.w500),
                                 decoration: const InputDecoration(
                                   hintText: '帖子标题',
                                   counterText: '',

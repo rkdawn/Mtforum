@@ -175,7 +175,7 @@ class _SignRankPageState extends State<_SignRankPage>
                       ),
                       title: Text(
                         _signedToday ? '今日已签到' : '今日尚未签到',
-                        style: const TextStyle(fontWeight: FontWeight.w700),
+                        style: const TextStyle(fontWeight: FontWeight.w500),
                       ),
                       subtitle: Text(
                         _signedToday
@@ -216,7 +216,7 @@ class _SignRankPageState extends State<_SignRankPage>
               child: Text(
                 '${_tabs[_tabController.index]}签到排行',
                 style: theme.textTheme.titleSmall?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -293,7 +293,7 @@ class _SignRankPageState extends State<_SignRankPage>
                                       '${index + 1}',
                                       style: theme.textTheme.titleSmall
                                           ?.copyWith(
-                                        fontWeight: FontWeight.w900,
+                                        fontWeight: FontWeight.w600,
                                       ),
                                     ),
                             ),
@@ -311,7 +311,7 @@ class _SignRankPageState extends State<_SignRankPage>
                                           overflow: TextOverflow.ellipsis,
                                           style: theme.textTheme.titleSmall
                                               ?.copyWith(
-                                            fontWeight: FontWeight.w800,
+                                            fontWeight: FontWeight.w500,
                                           ),
                                         ),
                                       ),
@@ -322,7 +322,7 @@ class _SignRankPageState extends State<_SignRankPage>
                                           style: theme.textTheme.labelSmall
                                               ?.copyWith(
                                             color: accent,
-                                            fontWeight: FontWeight.w900,
+                                            fontWeight: FontWeight.w600,
                                           ),
                                         ),
                                       ],
@@ -367,7 +367,7 @@ class _SignRankPageState extends State<_SignRankPage>
                                   overflow: TextOverflow.ellipsis,
                                   style: theme.textTheme.labelSmall?.copyWith(
                                     color: colors.onSecondaryContainer,
-                                    fontWeight: FontWeight.w700,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),

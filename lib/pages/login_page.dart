@@ -113,7 +113,7 @@ class _LoginPageState extends State<LoginPage> {
                     '登录 MT 论坛',
                     textAlign: TextAlign.center,
                     style: theme.textTheme.headlineSmall?.copyWith(
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w500,
                     ),
                   ),
                   const SizedBox(height: 6),

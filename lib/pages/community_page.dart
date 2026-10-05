@@ -125,7 +125,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                     child: Text(
                                       group.name,
                                       style: theme.textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w800,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
@@ -142,7 +142,7 @@ class _CommunityPageState extends State<CommunityPage> {
                                       '${group.boards.length}',
                                       style: theme.textTheme.labelSmall?.copyWith(
                                         color: colors.onSurfaceVariant,
-                                        fontWeight: FontWeight.w700,
+                                        fontWeight: FontWeight.w500,
                                       ),
                                     ),
                                   ),
@@ -238,7 +238,7 @@ class _BoardTile extends StatelessWidget {
                 maxLines: 1,
                 overflow: TextOverflow.ellipsis,
                 style: theme.textTheme.bodyLarge?.copyWith(
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w500,
                 ),
               ),
             ),
@@ -282,7 +282,7 @@ class _TodayPostsBadge extends StatelessWidget {
         '今日 $count',
         style: theme.textTheme.labelSmall?.copyWith(
           color: active ? colors.onPrimaryContainer : colors.outline,
-          fontWeight: FontWeight.w700,
+          fontWeight: FontWeight.w500,
         ),
       ),
     );

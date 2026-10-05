@@ -48,7 +48,7 @@ class _CodeBlock extends StatelessWidget {
                   language.label,
                   style: theme.textTheme.labelMedium?.copyWith(
                     color: colors.onSurfaceVariant,
-                    fontWeight: FontWeight.w700,
+                    fontWeight: FontWeight.w500,
                   ),
                 ),
                 const Spacer(),
@@ -353,7 +353,7 @@ class _CodeSyntax {
       } else if (_isKeyword(keywords, token, language.id)) {
         style = TextStyle(
           color: keywordColor,
-          fontWeight: FontWeight.w600,
+          fontWeight: FontWeight.w500,
         );
       } else if (const {
         'true',
@@ -373,7 +373,7 @@ class _CodeSyntax {
             RegExp(r'<\/?\s*$').hasMatch(before)) {
           style = TextStyle(
             color: keywordColor,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w500,
           );
         } else if (RegExp(r'^\s*\(').hasMatch(after)) {
           style = TextStyle(color: functionColor);
@@ -606,7 +606,7 @@ class _TableBlock extends StatelessWidget {
                               style: theme.textTheme.bodySmall?.copyWith(
                                 height: 1.45,
                                 fontWeight: rowIndex < headerRows
-                                    ? FontWeight.w700
+                                    ? FontWeight.w500
                                     : FontWeight.w400,
                                 color: rowIndex < headerRows
                                     ? colors.onPrimaryContainer

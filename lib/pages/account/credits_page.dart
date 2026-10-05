@@ -191,7 +191,7 @@ class _SummaryView extends StatelessWidget {
                     Text(
                       value?.toString() ?? '-',
                       style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.w800,
+                        fontWeight: FontWeight.w500,
                       ),
                     ),
                     Text(
@@ -341,7 +341,7 @@ class _CreditRecordList extends StatelessWidget {
                           maxLines: 2,
                           overflow: TextOverflow.ellipsis,
                           style: theme.textTheme.titleSmall?.copyWith(
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                         if (record.time.isNotEmpty) ...[
@@ -365,7 +365,7 @@ class _CreditRecordList extends StatelessWidget {
                           record.delta,
                           style: theme.textTheme.titleMedium?.copyWith(
                             color: deltaColor,
-                            fontWeight: FontWeight.w900,
+                            fontWeight: FontWeight.w600,
                           ),
                         ),
                         if (record.type.isNotEmpty)
