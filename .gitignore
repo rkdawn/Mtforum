@@ -53,3 +53,4 @@ mtforum-r2*
 .env
 .env.*
 *.local
+.cloud-build-last.log
