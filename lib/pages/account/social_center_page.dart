@@ -337,7 +337,7 @@ class _SocialListState extends State<_SocialList> {
       child: ListView.builder(
         controller: _scroll,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
         itemCount: _items.isEmpty ? 1 : _items.length + 1,
         itemBuilder: (context, index) {
           if (_items.isEmpty) {
@@ -376,8 +376,15 @@ class _SocialListState extends State<_SocialList> {
           final busy = _followingNow.contains(user.uid);
           final followed = _followedUids.contains(user.uid);
 
-          return Card(
-            margin: const EdgeInsets.only(bottom: 10),
+          // 线条风：无卡片容器，透明行 + 底部细分隔线。
+          return Container(
+            decoration: BoxDecoration(
+              border: Border(
+                bottom: BorderSide(
+                  color: colors.outlineVariant.withValues(alpha: 0.45),
+                ),
+              ),
+            ),
             child: ListTile(
               leading: CircleAvatar(
                 backgroundImage: user.avatarUrl == null
@@ -597,12 +604,17 @@ class _FriendRequestListState extends State<_FriendRequestList> {
       if (item.requestTime.isNotEmpty) item.requestTime,
     ].join(' · ');
 
-    return Card(
-      margin: const EdgeInsets.only(bottom: 10),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(14, 14, 14, 12),
-        child: Column(
+    // 线条风：无卡片容器，透明行 + 底部细分隔线。
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 12, 0, 12),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+      ),
+      child: Column(
           children: [
             Row(
               children: [
@@ -640,13 +652,13 @@ class _FriendRequestListState extends State<_FriendRequestList> {
                                 vertical: 2,
                               ),
                               decoration: BoxDecoration(
-                                color: colors.tertiaryContainer,
+                                color: colors.surfaceContainerHighest,
                                 borderRadius: BorderRadius.circular(999),
                               ),
                               child: Text(
                                 '在线',
                                 style: theme.textTheme.labelSmall?.copyWith(
-                                  color: colors.onTertiaryContainer,
+                                  color: colors.onSurfaceVariant,
                                   fontWeight: FontWeight.w500,
                                 ),
                               ),
@@ -684,10 +696,13 @@ class _FriendRequestListState extends State<_FriendRequestList> {
               Row(
                 children: [
                   Expanded(
-                    child: OutlinedButton.icon(
+                    child: TextButton.icon(
                       onPressed: item.ignoreUrl == null
                           ? null
                           : () => _operate(item, item.ignoreUrl),
+                      style: TextButton.styleFrom(
+                        foregroundColor: colors.onSurfaceVariant,
+                      ),
                       icon: const Icon(Icons.close_rounded, size: 18),
                       label: const Text('忽略'),
                     ),
@@ -703,8 +718,7 @@ class _FriendRequestListState extends State<_FriendRequestList> {
                   ),
                 ],
               ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -714,12 +728,11 @@ class _FriendRequestListState extends State<_FriendRequestList> {
     if (_loading) {
       return const AppStateView.loading();
     }
-
     return RefreshIndicator(
       onRefresh: _load,
       child: ListView(
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 24),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
         children: [
           if (_items.isEmpty)
             const SizedBox(

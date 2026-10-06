@@ -30,21 +30,26 @@ class _NoticeCard extends StatelessWidget {
         hasLocalAction || item.targetUrl != null || item.hasThreadTarget;
     final action = item.actionText.isEmpty ? item.content : item.actionText;
 
-    return Card(
-      margin: EdgeInsets.zero,
-      color: item.isUnread
-          ? Color.alphaBlend(
-              colors.primary.withValues(alpha: 0.055),
-              colors.surfaceContainerLow,
-            )
-          : colors.surfaceContainerLow,
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: canOpen ? onOpen : null,
-        onLongPress: onIgnore,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(11, 11, 11, 10),
-          child: Column(
+    // 线条风：无卡片容器，透明行 + 底部细分隔线；未读用淡黑底强调。
+    return InkWell(
+      onTap: canOpen ? onOpen : null,
+      onLongPress: onIgnore,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 10),
+        decoration: BoxDecoration(
+          color: item.isUnread
+              ? Color.alphaBlend(
+                  colors.primary.withValues(alpha: 0.05),
+                  colors.surface,
+                )
+              : null,
+          border: Border(
+            bottom: BorderSide(
+              color: colors.outlineVariant.withValues(alpha: 0.45),
+            ),
+          ),
+        ),
+        child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Row(
@@ -129,74 +134,34 @@ class _NoticeCard extends StatelessWidget {
                 const SizedBox(height: 8),
                 _NoticeReplyPreview(post: replyPreview!),
               ],
-              if (canOpen) ...[
-                const SizedBox(height: 8),
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 10,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: colors.primaryContainer.withValues(alpha: 0.45),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(
-                        hasLocalAction
-                            ? Icons.group_add_outlined
-                            : item.hasThreadTarget
-                                ? Icons.article_outlined
-                                : Icons.open_in_new_rounded,
-                        size: 16,
-                        color: colors.primary,
-                      ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          item.targetTitle ??
-                              (hasLocalAction
-                                  ? '处理好友申请'
-                                  : item.hasThreadTarget
-                                      ? '查看相关帖子'
-                                      : '查看相关页面'),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.labelLarge?.copyWith(
-                            color: colors.primary,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                      ),
-                      Icon(
-                        Icons.chevron_right_rounded,
-                        size: 18,
-                        color: colors.primary,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+              // 整行可点即隐含打开操作，不再重复渲染"查看相关帖子"按钮块。
               if (onPokeBack != null) ...[
-                const SizedBox(height: 8),
+                const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: ActionChip(
+                  child: TextButton.icon(
                     onPressed: onPokeBack,
-                    visualDensity: VisualDensity.compact,
-                    avatar: Icon(
-                      Icons.waving_hand_outlined,
-                      size: 17,
-                      color: colors.primary,
+                    style: TextButton.styleFrom(
+                      visualDensity: VisualDensity.compact,
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      minimumSize: const Size(0, 30),
                     ),
-                    label: const Text('回打招呼'),
+                    icon: Icon(
+                      Icons.waving_hand_outlined,
+                      size: 16,
+                      color: colors.onSurfaceVariant,
+                    ),
+                    label: Text(
+                      '回打招呼',
+                      style: theme.textTheme.labelMedium?.copyWith(
+                        color: colors.onSurfaceVariant,
+                      ),
+                    ),
                   ),
                 ),
               ],
             ],
           ),
-        ),
       ),
     );
   }
@@ -257,12 +222,12 @@ class _NoticeReplyPreview extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.fromLTRB(10, 8, 10, 8),
       decoration: BoxDecoration(
-        color: colors.surfaceContainerHighest.withValues(alpha: 0.72),
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(9),
         border: Border(
           left: BorderSide(
-            color: colors.primary.withValues(alpha: 0.72),
-            width: 3,
+            color: colors.outlineVariant,
+            width: 2,
           ),
         ),
       ),
@@ -319,10 +284,10 @@ class _NoticeAvatar extends StatelessWidget {
     if (item.isSystem) {
       return CircleAvatar(
         radius: 20,
-        backgroundColor: colors.tertiaryContainer,
+        backgroundColor: colors.surfaceContainerHighest,
         child: Icon(
           Icons.campaign_outlined,
-          color: colors.onTertiaryContainer,
+          color: colors.onSurfaceVariant,
         ),
       );
     }
@@ -330,10 +295,10 @@ class _NoticeAvatar extends StatelessWidget {
     if (url == null || url.isEmpty) {
       return CircleAvatar(
         radius: 20,
-        backgroundColor: colors.secondaryContainer,
+        backgroundColor: colors.surfaceContainerHighest,
         child: Icon(
           Icons.person_outline_rounded,
-          color: colors.onSecondaryContainer,
+          color: colors.onSurfaceVariant,
         ),
       );
     }
@@ -352,11 +317,11 @@ class _NoticeAvatar extends StatelessWidget {
         errorWidget: (_, __, ___) => Container(
           width: 40,
           height: 40,
-          color: colors.secondaryContainer,
+          color: colors.surfaceContainerHighest,
           alignment: Alignment.center,
           child: Icon(
             Icons.person_outline_rounded,
-            color: colors.onSecondaryContainer,
+            color: colors.onSurfaceVariant,
           ),
         ),
       ),

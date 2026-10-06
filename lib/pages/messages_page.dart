@@ -86,7 +86,7 @@ class _MessagesPageState extends State<MessagesPage> {
             child: CustomScrollView(
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: [
-                SliverAppBar.large(
+                SliverAppBar(
                   title: const Text('消息'),
                   pinned: true,
                   actions: [
@@ -119,23 +119,31 @@ class _MessagesPageState extends State<MessagesPage> {
                   ],
                 ),
                 SliverPadding(
-                  padding: const EdgeInsets.fromLTRB(16, 4, 16, 28),
+                  padding: const EdgeInsets.fromLTRB(12, 4, 12, 28),
                   sliver: SliverList(
                     delegate: SliverChildListDelegate([
                       _MessageEntryCard(
-                        icon: Icons.notifications_none_rounded,
-                        iconBackground: colors.tertiaryContainer,
-                        iconForeground: colors.onTertiaryContainer,
-                        title: '论坛通知',
-                        subtitle: '帖子回复、@我、互动和系统提醒',
-                        badge: summary.notices.label,
-                        onTap: () => _open(const NoticePage()),
+                        icon: Icons.article_outlined,
+                        title: '帖子回复',
+                        subtitle: '我的帖子收到的新回复',
+                        onTap: () => _open(const NoticePage.focus(
+                          initialView: 'mypost',
+                          initialType: 'post',
+                          focusTitle: '帖子回复',
+                        )),
                       ),
-                      const SizedBox(height: 12),
+                      _MessageEntryCard(
+                        icon: Icons.alternate_email_rounded,
+                        title: '@我',
+                        subtitle: '提到我的帖子和评论',
+                        onTap: () => _open(const NoticePage.focus(
+                          initialView: 'mypost',
+                          initialType: 'at',
+                          focusTitle: '@我',
+                        )),
+                      ),
                       _MessageEntryCard(
                         icon: Icons.chat_bubble_outline_rounded,
-                        iconBackground: colors.primaryContainer,
-                        iconForeground: colors.onPrimaryContainer,
                         title: '私信',
                         subtitle: latestPm == null
                             ? '查看会话和发送私信'
@@ -143,15 +151,19 @@ class _MessagesPageState extends State<MessagesPage> {
                         badge: summary.privateMessages.label,
                         onTap: () => _open(const PrivateMessagesPage()),
                       ),
-                      const SizedBox(height: 12),
                       _MessageEntryCard(
                         icon: Icons.group_add_outlined,
-                        iconBackground: colors.secondaryContainer,
-                        iconForeground: colors.onSecondaryContainer,
                         title: '好友申请',
                         subtitle: '直接查看和处理待处理请求',
                         badge: summary.friendRequests.label,
                         onTap: () => _open(const FriendRequestsPage()),
+                      ),
+                      _MessageEntryCard(
+                        icon: Icons.notifications_none_rounded,
+                        title: '更多通知',
+                        subtitle: '点评、互动、系统与应用提醒',
+                        badge: summary.notices.label,
+                        onTap: () => _open(const NoticePage()),
                       ),
                       if (!_api.isLoggedIn) ...[
                         const SizedBox(height: 18),
@@ -171,8 +183,6 @@ class _MessagesPageState extends State<MessagesPage> {
 
 class _MessageEntryCard extends StatelessWidget {
   final IconData icon;
-  final Color iconBackground;
-  final Color iconForeground;
   final String title;
   final String subtitle;
   final String? badge;
@@ -180,8 +190,6 @@ class _MessageEntryCard extends StatelessWidget {
 
   const _MessageEntryCard({
     required this.icon,
-    required this.iconBackground,
-    required this.iconForeground,
     required this.title,
     required this.subtitle,
     required this.onTap,
@@ -193,69 +201,76 @@ class _MessageEntryCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    return Card(
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 15),
-          child: Row(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              Container(
-                width: 48,
-                height: 48,
-                decoration: BoxDecoration(
-                  color: iconBackground,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                alignment: Alignment.center,
-                child: Icon(icon, color: iconForeground, size: 24),
-              ),
-              const SizedBox(width: 14),
-              Expanded(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      title,
-                      style: theme.textTheme.titleMedium?.copyWith(
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      subtitle,
-                      style: theme.textTheme.bodySmall?.copyWith(
-                        color: colors.onSurfaceVariant,
-                        height: 1.4,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 10),
-              if (badge != null) ...[
-                SizedBox(
-                  width: 30,
-                  height: 48,
-                  child: Center(child: _CountBadge(label: badge!)),
-                ),
-                const SizedBox(width: 6),
-              ],
-              SizedBox(
-                width: 24,
-                height: 48,
-                child: Center(
-                  child: Icon(
-                    Icons.chevron_right_rounded,
-                    color: colors.outline,
-                  ),
-                ),
-              ),
-            ],
+    // 线条风：无卡片容器，透明行 + 底部细分隔线。
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 13),
+        decoration: BoxDecoration(
+          border: Border(
+            bottom: BorderSide(
+              color: colors.outlineVariant.withValues(alpha: 0.45),
+            ),
           ),
+        ),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Container(
+              width: 36,
+              height: 36,
+              decoration: BoxDecoration(
+                color: colors.surfaceContainerHighest.withValues(alpha: 0.45),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              alignment: Alignment.center,
+              child: Icon(icon, color: colors.onSurfaceVariant, size: 20),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    subtitle,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: colors.onSurfaceVariant,
+                      height: 1.4,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 10),
+            if (badge != null) ...[
+              SizedBox(
+                width: 30,
+                height: 48,
+                child: Center(child: _CountBadge(label: badge!)),
+              ),
+              const SizedBox(width: 6),
+            ],
+            SizedBox(
+              width: 24,
+              height: 48,
+              child: Center(
+                child: Icon(
+                  Icons.chevron_right_rounded,
+                  color: colors.outline,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
     );

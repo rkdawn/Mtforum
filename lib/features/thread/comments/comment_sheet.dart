@@ -9,6 +9,8 @@ class _CommentsSheet extends StatefulWidget {
   final Future<void> Function() onRefresh;
   final bool Function(Post post) canEdit;
   final ValueChanged<Post> onEdit;
+  final bool Function(Post post) canDelete;
+  final ValueChanged<Post> onDelete;
   final void Function(Post post, int index) onImageTap;
 
   const _CommentsSheet({
@@ -20,6 +22,8 @@ class _CommentsSheet extends StatefulWidget {
     required this.onRefresh,
     required this.canEdit,
     required this.onEdit,
+    required this.canDelete,
+    required this.onDelete,
     required this.onImageTap,
   });
 
@@ -509,6 +513,12 @@ class _CommentsSheetState extends State<_CommentsSheet> {
               ? () {
                   Navigator.pop(context);
                   Future.microtask(() => widget.onEdit(post));
+                }
+              : null,
+          onDelete: widget.canDelete(post)
+              ? () {
+                  Navigator.pop(context);
+                  Future.microtask(() => widget.onDelete(post));
                 }
               : null,
           onImageTap: (imageIndex) => widget.onImageTap(post, imageIndex),

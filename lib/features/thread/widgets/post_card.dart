@@ -12,7 +12,11 @@ class _PostCard extends StatelessWidget {
   final VoidCallback? onReplyContextTap;
   final VoidCallback onReply;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
   final ValueChanged<int> onImageTap;
+
+  /// 楼主直排模式（扁平化帖子页）：无边框卡片、白底、正文直接铺开。
+  final bool flat;
 
   const _PostCard({
     required this.post,
@@ -23,7 +27,9 @@ class _PostCard extends StatelessWidget {
     this.onReplyContextTap,
     required this.onReply,
     this.onEdit,
+    this.onDelete,
     required this.onImageTap,
+    this.flat = false,
   });
 
   @override
@@ -73,40 +79,34 @@ class _PostCard extends StatelessWidget {
     final card = Card(
       margin: compactFloor
           ? EdgeInsets.zero
-          : const EdgeInsets.only(bottom: 8),
+          : EdgeInsets.zero,
       elevation: compactFloor ? 0 : null,
-      color: compactFloor
-          ? (highlighted
-              ? Color.alphaBlend(
-                  colors.primary.withValues(alpha: 0.14),
-                  colors.surface,
-                )
-              : colors.surface)
-          : (highlighted
-              ? Color.alphaBlend(
-                  colors.primary.withValues(alpha: 0.10),
-                  colors.surfaceContainerLow,
-                )
-              : colors.surfaceContainerLow),
-      shape: compactFloor
+      // 扁平楼主视图：白底直排，不再套 surfaceContainerLow 灰卡。
+      color: flat ? colors.surfaceContainerLowest : null,
+      shape: flat
           ? const RoundedRectangleBorder(borderRadius: BorderRadius.zero)
-          : RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(16),
-              side: BorderSide(
-                color: highlighted ? colors.primary : colors.outlineVariant,
-                width: highlighted ? 1.5 : 1,
-              ),
-            ),
+          : compactFloor
+              ? const RoundedRectangleBorder(borderRadius: BorderRadius.zero)
+              : RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(16),
+                  side: BorderSide(
+                    color: highlighted ? colors.primary : colors.outlineVariant,
+                    width: highlighted ? 1.5 : 1,
+                  ),
+                ),
       child: Padding(
-        padding: compactFloor
-            ? const EdgeInsets.fromLTRB(4, 11, 4, 0)
-            : const EdgeInsets.fromLTRB(12, 10, 12, 8),
+        padding: flat
+            ? const EdgeInsets.fromLTRB(2, 0, 2, 0)
+            : compactFloor
+                ? const EdgeInsets.fromLTRB(4, 11, 4, 0)
+                : const EdgeInsets.fromLTRB(12, 10, 12, 8),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
               children: [
-                if (post.isOp && !compactFloor) ...[
+                // 扁平楼主视图：去掉左侧主色竖条装饰。
+                if (post.isOp && !compactFloor && !flat) ...[
                   Container(
                     width: 3,
                     height: 34,
@@ -208,12 +208,7 @@ class _PostCard extends StatelessWidget {
                     tooltip: '回复',
                     onPressed: onReply,
                   ),
-                  if (onEdit != null)
-                    _CompactAction(
-                      icon: Icons.edit_outlined,
-                      tooltip: '编辑',
-                      onPressed: onEdit!,
-                    ),
+                  ReplyActions(onEdit: onEdit, onDelete: onDelete),
                 ] else
                   _Pill(text: _floorText(post.floor)),
               ],
@@ -235,7 +230,7 @@ class _PostCard extends StatelessWidget {
               ),
             ],
             if (visibleRichContent.isNotEmpty) ...[
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               _CollapsibleComment(
                 enabled: compactFloor && content.length > _collapseThreshold,
                 child: _RichContentView(
@@ -249,7 +244,7 @@ class _PostCard extends StatelessWidget {
                 ),
               ),
             ] else if (content.isNotEmpty) ...[
-              const SizedBox(height: 10),
+              const SizedBox(height: 6),
               _CollapsibleComment(
                 enabled: compactFloor && content.length > _collapseThreshold,
                 child: SelectableText(
@@ -304,9 +299,27 @@ class _PostCard extends StatelessWidget {
                 },
               ),
             ],
-            // 评论区把回复/编辑挪到了第一行右侧，这里只保留帖子页（大卡片）的操作行，
-            // 否则每条评论都要多占一行，列表看起来又长又碎。
-            if (!compactFloor && (!post.isOp || onEdit != null)) ...[
+            // 楼主直排视图：操作行改为胶囊按钮组（点赞/收藏/回复），
+            // 沿用底部回复栏的样式语言。
+            if (flat) ...[
+              const SizedBox(height: 2),
+              Row(
+                children: [
+                  if (onEdit != null)
+                    _FlatPillAction(
+                      icon: Icons.edit_outlined,
+                      label: '编辑',
+                      onPressed: onEdit!,
+                    ),
+                  _FlatPillAction(
+                    icon: Icons.reply_rounded,
+                    label: '回复',
+                    onPressed: onReply,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 4),
+            ] else if (!compactFloor && (!post.isOp || onEdit != null)) ...[
               const SizedBox(height: 2),
               Align(
                 alignment: Alignment.centerRight,
@@ -763,6 +776,41 @@ class _CompactAction extends StatelessWidget {
       visualDensity: VisualDensity.compact,
       padding: EdgeInsets.zero,
       constraints: const BoxConstraints(minWidth: 36, minHeight: 36),
+    );
+  }
+}
+
+/// 楼主直排视图的轻量操作按钮：无底色，线条风。
+class _FlatPillAction extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onPressed;
+
+  const _FlatPillAction({
+    required this.icon,
+    required this.label,
+    required this.onPressed,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return TextButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, size: 16, color: colors.onSurfaceVariant),
+      label: Text(
+        label,
+        style: theme.textTheme.labelMedium?.copyWith(
+          color: colors.onSurfaceVariant,
+        ),
+      ),
+      style: TextButton.styleFrom(
+        visualDensity: VisualDensity.compact,
+        padding: const EdgeInsets.symmetric(horizontal: 10),
+        minimumSize: const Size(0, 34),
+        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+      ),
     );
   }
 }

@@ -3,6 +3,7 @@ import 'dart:convert';
 
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -35,6 +36,22 @@ class ApiService {
   static const String baseUrl = 'https://bbs.binmt.cc';
 
   ApiService._();
+
+  @visibleForTesting
+  ApiService.forTesting({
+    required Dio dio,
+    required SharedPreferences prefs,
+    String? currentUid,
+  }) {
+    _dio = dio;
+    _prefs = prefs;
+    _currentUid = currentUid;
+    if (currentUid != null && currentUid != '0') {
+      _auth = 'test-auth';
+      _saltkey = 'test-saltkey';
+    }
+  }
+
   static final ApiService instance = ApiService._();
 
   final ForumParser _parser = const ForumParser();
@@ -73,6 +90,15 @@ class ApiService {
   String? get saltkey => _saltkey;
   String? get formhash => _formhash;
   String? get currentUid => _currentUid;
+
+  /// 页面可能省略 discuz_uid，此时使用当前登录会话已识别的 UID。
+  /// 页面明确为游客时不回退，也不能用昵称判断归属。
+  bool isOwnPost(Post post, {String pageUid = ''}) {
+    if (!isLoggedIn || pageUid.trim() == '0') return false;
+    final sessionUid = _currentUid?.trim() ?? '';
+    final uid = sessionUid.isNotEmpty ? sessionUid : pageUid.trim();
+    return uid.isNotEmpty && uid != '0' && post.authorUid?.trim() == uid;
+  }
 
   /// 活跃 CookieJar（探测请求与人机验证回流共用）。
   CookieJar get activeCookieJar => _cookieJar;

@@ -67,7 +67,7 @@ class _CommunityPageState extends State<CommunityPage> {
         child: CustomScrollView(
           physics: const AlwaysScrollableScrollPhysics(),
           slivers: [
-            SliverAppBar.large(
+            SliverAppBar(
               title: const Text('社区'),
               pinned: true,
               actions: [
@@ -91,91 +91,78 @@ class _CommunityPageState extends State<CommunityPage> {
               )
             else
               SliverPadding(
-                padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
+                padding: const EdgeInsets.fromLTRB(16, 4, 16, 24),
                 sliver: SliverList.builder(
                   itemCount: _groups.length,
                   itemBuilder: (context, index) {
                     final group = _groups[index];
 
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 12),
-                      child: Material(
-                        color: colors.surfaceContainerLow,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          side: BorderSide(color: colors.outlineVariant),
-                        ),
-                        clipBehavior: Clip.antiAlias,
-                        child: Column(
-                          children: [
-                            Padding(
-                              padding: const EdgeInsets.fromLTRB(13, 10, 10, 9),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 3,
-                                    height: 15,
-                                    decoration: BoxDecoration(
-                                      color: colors.primary,
-                                      borderRadius: BorderRadius.circular(99),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Text(
-                                      group.name,
-                                      style: theme.textTheme.titleSmall?.copyWith(
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                  Container(
-                                    padding: const EdgeInsets.symmetric(
-                                      horizontal: 7,
-                                      vertical: 2,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: colors.surfaceContainerHighest,
-                                      borderRadius: BorderRadius.circular(99),
-                                    ),
-                                    child: Text(
-                                      '${group.boards.length}',
-                                      style: theme.textTheme.labelSmall?.copyWith(
-                                        color: colors.onSurfaceVariant,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Divider(height: 1, color: colors.outlineVariant),
-                            for (var boardIndex = 0;
-                                boardIndex < group.boards.length;
-                                boardIndex++) ...[
-                              if (boardIndex > 0)
-                                Divider(
-                                  height: 1,
-                                  indent: 56,
-                                  color: colors.outlineVariant.withValues(
-                                    alpha: 0.72,
+                    // 线条风：组标题直排，板块行铺在灰底上，
+                    // 组与组之间通栏细线分隔，不再套卡片容器。
+                    return Column(
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(2, 12, 2, 6),
+                          child: Row(
+                            children: [
+                              Expanded(
+                                child: Text(
+                                  group.name,
+                                  style: theme.textTheme.titleSmall?.copyWith(
+                                    fontWeight: FontWeight.w600,
                                   ),
                                 ),
-                              _BoardTile(
-                                board: group.boards[boardIndex],
-                                onTap: () => Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                    builder: (_) => ForumThreadsPage(
-                                      board: group.boards[boardIndex],
-                                    ),
+                              ),
+                              Container(
+                                padding: const EdgeInsets.symmetric(
+                                  horizontal: 7,
+                                  vertical: 2,
+                                ),
+                                decoration: BoxDecoration(
+                                  color: colors.surfaceContainerHighest,
+                                  borderRadius: BorderRadius.circular(99),
+                                ),
+                                child: Text(
+                                  '${group.boards.length}',
+                                  style: theme.textTheme.labelSmall?.copyWith(
+                                    color: colors.onSurfaceVariant,
+                                    fontWeight: FontWeight.w500,
                                   ),
                                 ),
                               ),
                             ],
-                          ],
+                          ),
                         ),
-                      ),
+                        for (var boardIndex = 0;
+                            boardIndex < group.boards.length;
+                            boardIndex++) ...[
+                          if (boardIndex > 0)
+                            Divider(
+                              height: 1,
+                              indent: 56,
+                              color: colors.outlineVariant.withValues(
+                                alpha: 0.5,
+                              ),
+                            ),
+                          _BoardTile(
+                            board: group.boards[boardIndex],
+                            onTap: () => Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (_) => ForumThreadsPage(
+                                  board: group.boards[boardIndex],
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                        if (index != _groups.length - 1)
+                          Divider(
+                            height: 1,
+                            thickness: 1,
+                            color: colors.outlineVariant.withValues(alpha: 0.6),
+                          ),
+                      ],
                     );
                   },
                 ),
@@ -218,7 +205,7 @@ class _BoardTile extends StatelessWidget {
                 child: board.iconUrl == null
                     ? Icon(
                         Icons.forum_outlined,
-                        color: colors.primary,
+                        color: colors.onSurfaceVariant,
                         size: 19,
                       )
                     : CachedNetworkImage(
@@ -226,7 +213,7 @@ class _BoardTile extends StatelessWidget {
                         fit: BoxFit.contain,
                         errorWidget: (_, __, ___) => Icon(
                           Icons.forum_outlined,
-                          color: colors.primary,
+                          color: colors.onSurfaceVariant,
                           size: 19,
                         ),
                       ),
@@ -273,15 +260,13 @@ class _TodayPostsBadge extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 3),
       decoration: BoxDecoration(
-        color: active
-            ? colors.primaryContainer.withValues(alpha: 0.72)
-            : colors.surfaceContainerHighest,
+        color: colors.surfaceContainerHighest,
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
         '今日 $count',
         style: theme.textTheme.labelSmall?.copyWith(
-          color: active ? colors.onPrimaryContainer : colors.outline,
+          color: active ? colors.onSurface : colors.outline,
           fontWeight: FontWeight.w500,
         ),
       ),
@@ -453,7 +438,6 @@ class _ForumThreadsPageState extends State<ForumThreadsPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final colors = theme.colorScheme;
 
     return Scaffold(
       body: RefreshIndicator(

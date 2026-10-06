@@ -115,7 +115,7 @@ class _HomePageState extends State<HomePage> {
       margin: const EdgeInsets.only(left: 8),
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
       decoration: BoxDecoration(
-        color: colors.primaryContainer.withValues(alpha: 0.72),
+        color: colors.surfaceContainerHighest.withValues(alpha: 0.6),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Row(
@@ -125,7 +125,7 @@ class _HomePageState extends State<HomePage> {
             width: 6,
             height: 6,
             decoration: BoxDecoration(
-              color: colors.primary,
+              color: colors.onSurfaceVariant,
               shape: BoxShape.circle,
             ),
           ),
@@ -133,7 +133,7 @@ class _HomePageState extends State<HomePage> {
           Text(
             onlineUsers == null ? '-- 在线' : '$onlineUsers 在线',
             style: Theme.of(context).textTheme.labelSmall?.copyWith(
-                  color: colors.onPrimaryContainer,
+                  color: colors.onSurfaceVariant,
                   fontWeight: FontWeight.w500,
                 ),
           ),
@@ -247,125 +247,174 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: RefreshIndicator(
-        onRefresh: _loadFirstPage,
-        child: CustomScrollView(
-          controller: _scrollController,
-          physics: const AlwaysScrollableScrollPhysics(),
-          slivers: [
-            SliverAppBar(
-              title: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text('MT论坛'),
-                  _buildOnlineBadge(context),
-                ],
-              ),
-              pinned: true,
-              centerTitle: false,
-              actions: [
-                IconButton(
-                  tooltip: '搜索',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const SearchPage(),
-                    ),
+      body: SafeArea(
+        bottom: false,
+        child: RefreshIndicator(
+          onRefresh: _loadFirstPage,
+          child: CustomScrollView(
+            controller: _scrollController,
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: [
+              if (_loading && _threads.isEmpty)
+                const SliverFillRemaining(
+                  child: AppStateView.loading(),
+                )
+              else if (_error != null && _threads.isEmpty)
+                SliverFillRemaining(
+                  child: AppStateView.error(
+                    message: _error!,
+                    onRetry: _loadFirstPage,
                   ),
-                  icon: const Icon(Icons.search_rounded),
-                ),
-                PopupMenuButton<_HomeFeedSort>(
-                  tooltip: '帖子排序',
-                  initialValue: _sort,
-                  onSelected: _changeSort,
-                  icon: const Icon(Icons.swap_vert_rounded),
-                  itemBuilder: (context) => _HomeFeedSort.values
-                      .map(
-                        (item) => PopupMenuItem<_HomeFeedSort>(
-                          value: item,
-                          child: Row(
-                            children: [
-                              Icon(
-                                item.icon,
-                                size: 20,
-                                color: item == _sort
-                                    ? Theme.of(context).colorScheme.primary
-                                    : null,
-                              ),
-                              const SizedBox(width: 12),
-                              Expanded(
-                                child: Text(
-                                  item.label,
-                                  style: TextStyle(
-                                    fontWeight: item == _sort
-                                        ? FontWeight.w500
-                                        : FontWeight.w500,
-                                  ),
-                                ),
-                              ),
-                              if (item == _sort)
-                                Icon(
-                                  Icons.check_rounded,
-                                  size: 20,
-                                  color: Theme.of(context).colorScheme.primary,
-                                ),
-                            ],
-                          ),
-                        ),
-                      )
-                      .toList(),
-                ),
-                IconButton(
-                  tooltip: '排行榜',
-                  onPressed: () => Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (_) => const RanklistPage(),
-                    ),
-                  ),
-                  icon: const Icon(Icons.emoji_events_outlined),
-                ),
-              ],
-            ),
-            if (_loading && _threads.isEmpty)
-              const SliverFillRemaining(
-                child: AppStateView.loading(),
-              )
-            else if (_error != null && _threads.isEmpty)
-              SliverFillRemaining(
-                child: AppStateView.error(
-                  message: _error!,
-                  onRetry: _loadFirstPage,
-                ),
-              )
-            else
-              SliverPadding(
-                padding: const EdgeInsets.fromLTRB(16, 6, 16, 20),
-                sliver: SliverList(
-                  delegate: SliverChildBuilderDelegate(
-                    (context, index) {
-                      if (index == _threads.length) {
-                        if (_loadingMore) {
-                          return const Padding(
-                            padding: EdgeInsets.all(18),
-                            child: Center(child: CircularProgressIndicator()),
-                          );
+                )
+              else
+                SliverPadding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
+                  sliver: SliverList(
+                    delegate: SliverChildBuilderDelegate(
+                      (context, index) {
+                        if (index == 0) return _buildFeedHeader(context);
+                        final threadIndex = index - 1;
+                        if (threadIndex == _threads.length) {
+                          if (_loadingMore) {
+                            return const Padding(
+                              padding: EdgeInsets.all(18),
+                              child:
+                                  Center(child: CircularProgressIndicator()),
+                            );
+                          }
+                          return const SizedBox(height: 12);
                         }
-                        return const SizedBox(height: 12);
-                      }
-                      final thread = _threads[index];
-                      return ThreadCard(
-                        thread: thread,
-                        onTap: () {
-                          Navigator.push(context, buildThreadRoute(thread.tid));
-                        },
-                      );
-                    },
-                    childCount: _threads.length + 1,
+                        final thread = _threads[threadIndex];
+                        return ThreadCard(
+                          thread: thread,
+                          onTap: () {
+                            Navigator.push(
+                                context, buildThreadRoute(thread.tid));
+                          },
+                        );
+                      },
+                      childCount: _threads.length + 2,
+                    ),
                   ),
                 ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// 列表顶部：大标题 + 在线人数 + 分段排序控件。
+  Widget _buildFeedHeader(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(2, 10, 2, 12),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              // 大标题，与 v2 预览一致。
+              Text(
+                'MT论坛',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: -0.3,
+                ),
               ),
-          ],
+              _buildOnlineBadge(context),
+              const Spacer(),
+              IconButton(
+                tooltip: '搜索',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const SearchPage(),
+                  ),
+                ),
+                icon: const Icon(Icons.search_rounded),
+              ),
+              IconButton(
+                tooltip: '排行榜',
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const RanklistPage(),
+                  ),
+                ),
+                icon: const Icon(Icons.emoji_events_outlined),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          // 分段控件：最新热门 / 最新发表 / 最新精华 / 抢沙发。
+          // 黑白风：选中段落纯白底（浅色），无彩色。
+          Container(
+            padding: const EdgeInsets.all(3),
+            decoration: BoxDecoration(
+              color: colors.surfaceContainerHighest.withValues(alpha: 0.55),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: Row(
+              children: _HomeFeedSort.values
+                  .map(
+                    (item) => Expanded(
+                      child: _FeedSegment(
+                        label: item.label,
+                        selected: item == _sort,
+                        onTap: () => _changeSort(item),
+                      ),
+                    ),
+                  )
+                  .toList(),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 分段控件的单独段落（iOS Segmented Control 样式）。
+class _FeedSegment extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _FeedSegment({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: Material(
+        color: selected ? colors.surfaceContainerLowest : Colors.transparent,
+        borderRadius: BorderRadius.circular(10),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10),
+          onTap: onTap,
+          child: Padding(
+            padding: const EdgeInsets.symmetric(vertical: 7),
+            child: Center(
+              child: Text(
+                label,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: theme.textTheme.labelMedium?.copyWith(
+                  color: selected ? colors.onSurface : colors.onSurfaceVariant,
+                  fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

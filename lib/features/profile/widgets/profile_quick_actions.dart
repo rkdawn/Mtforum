@@ -70,10 +70,18 @@ class _QuickActions extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return Material(
-      color: colors.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(18),
-      clipBehavior: Clip.antiAlias,
+    // 线条风：无容器，四等分透明行，项间竖细线分隔。
+    return Container(
+      decoration: BoxDecoration(
+        border: Border(
+          top: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.45),
+          ),
+          bottom: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+      ),
       child: Row(
         children: [
           Expanded(
@@ -84,22 +92,25 @@ class _QuickActions extends StatelessWidget {
               onTap: onMessages,
             ),
           ),
+          _verticalDivider(colors),
           Expanded(
             child: _QuickAction(
               icon: Icons.bookmarks_outlined,
               label: '收藏',
-              color: colors.secondary,
+              color: colors.primary,
               onTap: onFavorites,
             ),
           ),
+          _verticalDivider(colors),
           Expanded(
             child: _QuickAction(
               icon: Icons.edit_calendar_outlined,
               label: '签到',
-              color: colors.tertiary,
+              color: colors.primary,
               onTap: onSign,
             ),
           ),
+          _verticalDivider(colors),
           Expanded(
             child: _QuickAction(
               icon: Icons.people_outline_rounded,
@@ -112,6 +123,12 @@ class _QuickActions extends StatelessWidget {
       ),
     );
   }
+
+  Widget _verticalDivider(ColorScheme colors) => Container(
+        width: 1,
+        height: 34,
+        color: colors.outlineVariant.withValues(alpha: 0.45),
+      );
 }
 
 class _QuickAction extends StatelessWidget {
@@ -130,21 +147,14 @@ class _QuickAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final colors = theme.colorScheme;
     return InkWell(
       onTap: onTap,
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 4),
         child: Column(
           children: [
-            Container(
-              width: 38,
-              height: 38,
-              decoration: BoxDecoration(
-                color: color.withValues(alpha: 0.13),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(icon, size: 21, color: color),
-            ),
+            Icon(icon, size: 24, color: colors.onSurfaceVariant),
             const SizedBox(height: 7),
             Text(
               label,
@@ -186,19 +196,23 @@ class _MenuGroup extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
-    return Material(
-      color: colors.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(18),
-      clipBehavior: Clip.antiAlias,
-      child: Column(
-        children: [
-          for (var i = 0; i < children.length; i++) ...[
-            children[i],
-            if (i != children.length - 1)
-              const Divider(height: 1, indent: 58),
-          ],
+    // 线条风：无容器，行间 indent 细线，组尾部通栏细线。
+    return Column(
+      children: [
+        for (var i = 0; i < children.length; i++) ...[
+          children[i],
+          if (i != children.length - 1)
+            Divider(
+              height: 1,
+              indent: 58,
+              color: colors.outlineVariant.withValues(alpha: 0.45),
+            ),
         ],
-      ),
+        Divider(
+          height: 1,
+          color: colors.outlineVariant.withValues(alpha: 0.45),
+        ),
+      ],
     );
   }
 }
@@ -225,11 +239,11 @@ class _MenuEntry extends StatelessWidget {
         width: 38,
         height: 38,
         decoration: BoxDecoration(
-          color: colors.primaryContainer.withValues(alpha: 0.62),
+          color: colors.surfaceContainerHighest.withValues(alpha: 0.55),
           borderRadius: BorderRadius.circular(11),
         ),
         alignment: Alignment.center,
-        child: Icon(icon, size: 20, color: colors.onPrimaryContainer),
+        child: Icon(icon, size: 20, color: colors.onSurfaceVariant),
       ),
       title: Text(title, style: const TextStyle(fontWeight: FontWeight.w500)),
       subtitle: Text(subtitle, maxLines: 1, overflow: TextOverflow.ellipsis),

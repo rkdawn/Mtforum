@@ -65,7 +65,7 @@ class ThreadDetailController extends ChangeNotifier {
     try {
       late final ThreadDetail detail;
       ThreadDetail? located;
-      if (_hasTarget) {
+      if (_hasTarget && !_targetCommentsOpened) {
         final results = await Future.wait<ThreadDetail>([
           _api.getThreadDetail(tid, page: 1),
           _api.getThreadDetailAtPost(
@@ -159,10 +159,12 @@ class ThreadDetailController extends ChangeNotifier {
   /// 是否允许编辑某楼层（本人且已登录）。
   bool canEdit(Post post) {
     final detail = _state.detail;
-    if (detail == null || !_api.isLoggedIn) return false;
-    final uid = detail.currentUid.trim();
-    return uid.isNotEmpty && uid != '0' && post.authorUid == uid;
+    return detail != null && _api.isOwnPost(post, pageUid: detail.currentUid);
   }
+
+  /// 只提供删除本人回复的入口，不提供删除整篇主题的操作。
+  bool canDelete(Post post) =>
+      !post.isOp && post.floor?.trim() != '1' && canEdit(post);
 
   @override
   void dispose() {

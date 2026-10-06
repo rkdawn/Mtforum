@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import 'app_color_scheme.dart';
 import 'app_elevation.dart';
@@ -54,6 +55,7 @@ abstract final class AppTheme {
       ),
 
       // ---------- 导航 ----------
+      // 固定状态栏样式：滚动时不再随 AppBar 动态变化（修复"状态栏丢色"）。
       appBarTheme: AppBarTheme(
         centerTitle: false,
         elevation: AppElevation.flat,
@@ -65,6 +67,14 @@ abstract final class AppTheme {
         toolbarTextStyle: textTheme.bodyMedium,
         iconTheme: IconThemeData(color: scheme.onSurface, size: 22),
         actionsIconTheme: IconThemeData(color: scheme.onSurface, size: 22),
+        systemOverlayStyle: SystemUiOverlayStyle(
+          statusBarColor: Colors.transparent,
+          statusBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+          systemNavigationBarColor: Colors.transparent,
+          systemNavigationBarIconBrightness:
+              isDark ? Brightness.light : Brightness.dark,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 68,
@@ -118,16 +128,15 @@ abstract final class AppTheme {
       ),
 
       // ---------- 容器 ----------
+      // 扁平化：卡片去描边去阴影，浅色下纯白、深色下微亮，
+      // 与灰底 scaffold 形成两级层次。
       cardTheme: CardThemeData(
         elevation: AppElevation.flat,
         color: scheme.surfaceContainerLow,
         surfaceTintColor: Colors.transparent,
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,
-        shape: RoundedRectangleBorder(
-          borderRadius: AppRadius.lg,
-          side: BorderSide(color: outline),
-        ),
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.lg),
       ),
       listTileTheme: ListTileThemeData(
         contentPadding: const EdgeInsets.symmetric(
@@ -234,8 +243,8 @@ abstract final class AppTheme {
         backgroundColor: scheme.surfaceContainerLow,
         selectedColor: scheme.primaryContainer,
         disabledColor: scheme.surfaceContainer,
-        side: BorderSide(color: outline),
-        shape: const RoundedRectangleBorder(borderRadius: AppRadius.sm),
+        side: BorderSide.none,
+        shape: const RoundedRectangleBorder(borderRadius: AppRadius.pill),
         labelStyle: textTheme.labelMedium,
         secondaryLabelStyle: textTheme.labelLarge?.copyWith(
           color: scheme.onPrimaryContainer,

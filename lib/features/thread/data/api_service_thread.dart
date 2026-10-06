@@ -621,7 +621,8 @@ extension ApiServiceThreadPart on ApiService {
     final data = <String, dynamic>{
       'formhash': form.formhash,
       'posttime': form.posttime,
-      'delete': form.deleteValue,
+      // 编辑绝不能沿用删除复选框的 value="1"，未勾选的控件也会被解析到。
+      'delete': '0',
       'htmlon': '0',
       'fid': form.fid,
       'tid': form.tid,
@@ -670,6 +671,7 @@ extension ApiServiceThreadPart on ApiService {
     final body = response.data ?? '';
     final success = body.contains('帖子编辑成功');
     if (success) {
+      _invalidatePostPageCache();
       return ThreadSubmitResult(
         success: true,
         message: '帖子编辑成功',
@@ -688,6 +690,99 @@ extension ApiServiceThreadPart on ApiService {
       fid: form.fid,
     );
   }
+  /// Discuz 删除回复使用编辑接口的 delete=1，必须与普通编辑分开提交。
+  Future<ThreadSubmitResult> deleteReply({
+    required String fid,
+    required String tid,
+    required Post post,
+    String pageUid = '',
+  }) async {
+    if (!isLoggedIn) {
+      return const ThreadSubmitResult(success: false, message: '请先登录');
+    }
+    if (post.isOp || post.floor?.trim() == '1') {
+      return const ThreadSubmitResult(success: false, message: '此操作只能删除回复，不能删除主题');
+    }
+    if (!isOwnPost(post, pageUid: pageUid)) {
+      return const ThreadSubmitResult(success: false, message: '只能删除自己的回复');
+    }
+    if (tid.trim().isEmpty || post.pid.trim().isEmpty) {
+      return const ThreadSubmitResult(success: false, message: '回复信息不完整，请刷新后重试');
+    }
+
+    final auth = _auth;
+    final form = await getEditPostForm(
+      fid: fid,
+      tid: tid,
+      pid: post.pid,
+      page: post.page,
+    );
+    // 取表单期间若切换账号，或服务器返回了其他楼层，不能继续执行删除。
+    if (_auth != auth || !isOwnPost(post, pageUid: pageUid)) {
+      return const ThreadSubmitResult(success: false, message: '登录状态已改变，请重新操作');
+    }
+    if (form.tid != tid || form.pid != post.pid) {
+      return const ThreadSubmitResult(success: false, message: '回复定位不一致，已取消删除，请刷新后重试');
+    }
+
+    final response = await _dio.post<String>(
+      '/forum.php',
+      queryParameters: const {
+        'mod': 'post',
+        'action': 'edit',
+        'editsubmit': 'yes',
+        'mobile': 2,
+        'handlekey': 'postform',
+        'inajax': 1,
+      },
+      data: {
+        'formhash': form.formhash,
+        'posttime': form.posttime,
+        'fid': form.fid,
+        'tid': form.tid,
+        'pid': form.pid,
+        'page': form.page,
+        'editsubmit': 'yes',
+        'delete': '1',
+        'subject': form.subject,
+        'message': form.message,
+      },
+      options: Options(
+        contentType: 'application/x-www-form-urlencoded; charset=UTF-8',
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest',
+          'Referer': '${ApiService.baseUrl}/forum.php?mod=post&action=edit'
+              '&fid=${form.fid}&tid=${form.tid}&pid=${form.pid}&page=${form.page}',
+        },
+        responseType: ResponseType.plain,
+        followRedirects: true,
+      ),
+    );
+
+    final body = response.data ?? '';
+    final readable = _extractAjaxMessage(body);
+    // 移动模板也会把成功提示放在 AJAX 回调脚本中，而非可见正文里。
+    final success = body.contains('帖子删除成功') ||
+        body.contains('帖子已删除') ||
+        body.contains('回复删除成功') ||
+        body.contains('post_edit_delete_succeed');
+    if (success) _invalidatePostPageCache();
+    return ThreadSubmitResult(
+      success: success,
+      message: success
+          ? '回复已删除'
+          : (readable.isEmpty ? '删除失败，论坛未确认删除成功，请刷新后查看' : readable),
+      tid: tid,
+      pid: post.pid,
+      fid: form.fid,
+    );
+  }
+
+  void _invalidatePostPageCache() {
+    _findPostPageCache.clear();
+    _findPostPageCacheTimes.clear();
+  }
+
   Future<PostEditorForm> getReplyPostForm({
     required String tid,
     required String fid,

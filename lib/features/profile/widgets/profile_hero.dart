@@ -14,14 +14,11 @@ class _ProfileHero extends StatelessWidget {
         ? profile.username!.trim()
         : '未知用户';
 
-    return Material(
-      color: colors.surfaceContainerLow,
-      borderRadius: BorderRadius.circular(20),
-      clipBehavior: Clip.antiAlias,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 18, 16, 16),
-        child: Column(
-          children: [
+    // 线条风：无卡片容器，内容直铺居中。
+    return Padding(
+      padding: const EdgeInsets.only(top: 8),
+      child: Column(
+        children: [
             CircleAvatar(
               radius: 36,
               backgroundColor: colors.primaryContainer,
@@ -102,8 +99,7 @@ class _ProfileHero extends StatelessWidget {
                 ],
               ),
             ],
-          ],
-        ),
+        ],
       ),
     );
   }

@@ -144,17 +144,15 @@ class _ReplySheetState extends State<_ReplySheet> {
       if (result.success) {
         widget.onReplied();
         Navigator.pop(context);
+        // 黑白风：成功提示走默认 inverseSurface 底，不再用绿色。
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(
-            content: Text('回复成功'),
-            backgroundColor: Colors.green,
-          ),
+          const SnackBar(content: Text('回复成功')),
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text(result.message),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -163,7 +161,7 @@ class _ReplySheetState extends State<_ReplySheet> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('回复失败: $e'),
-            backgroundColor: Colors.red,
+            backgroundColor: Theme.of(context).colorScheme.error,
           ),
         );
       }
@@ -208,11 +206,7 @@ class _ReplySheetState extends State<_ReplySheet> {
                           style: theme.textTheme.titleMedium,
                         ),
                       ),
-                      IconButton(
-                        tooltip: '关闭',
-                        icon: const Icon(Icons.close_rounded),
-                        onPressed: () => Navigator.pop(context),
-                      ),
+                      // 关闭交给下滑手势，不再放「×」按钮。
                     ],
                   ),
                   const SizedBox(height: 6),
@@ -223,22 +217,41 @@ class _ReplySheetState extends State<_ReplySheet> {
                     maxLines: 8,
                     autofocus: true,
                     onTap: _hideSmileysForKeyboard,
+                    // 线条风输入框：透明底 + 细描边，聚焦加深。
                     decoration: InputDecoration(
                       hintText: widget.replyToName != null
                           ? '回复 @${widget.replyToName}...'
                           : '输入回复内容...',
-                      filled: true,
-                      fillColor: colors.surfaceContainerHighest,
+                      filled: false,
+                      contentPadding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 12,
+                      ),
                       border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(16),
-                        borderSide: BorderSide.none,
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colors.outlineVariant,
+                        ),
+                      ),
+                      enabledBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colors.outlineVariant,
+                        ),
+                      ),
+                      focusedBorder: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide(
+                          color: colors.onSurface,
+                          width: 1.2,
+                        ),
                       ),
                     ),
                   ),
                   const SizedBox(height: 8),
                   Row(
                     children: [
-                      IconButton.filledTonal(
+                      IconButton(
                         tooltip: '表情',
                         isSelected: _showSmileys,
                         onPressed: _toggleSmileys,
@@ -249,7 +262,7 @@ class _ReplySheetState extends State<_ReplySheet> {
                         ),
                       ),
                       const SizedBox(width: 8),
-                      IconButton.filledTonal(
+                      IconButton(
                         tooltip: _replyAttachments.isEmpty
                             ? '添加图片'
                             : '已添加 ${_replyAttachments.length} 张图片',
@@ -269,25 +282,21 @@ class _ReplySheetState extends State<_ReplySheet> {
                                 child: const Icon(Icons.image_outlined),
                               ),
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        // 不放任何提示文案：表情支持与插入方式在面板里自明。
-                        child: const SizedBox.shrink(),
-                      ),
-                      const SizedBox(width: 8),
-                      FilledButton.icon(
+                      const Spacer(),
+                      // 发送：原版实心纸飞机图标，无底色（线条风）。
+                      IconButton(
+                        tooltip: '发送',
                         onPressed:
                             _sending || _uploadingImage ? null : _send,
                         icon: _sending
                             ? const SizedBox(
-                                width: 16,
-                                height: 16,
+                                width: 18,
+                                height: 18,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
                                 ),
                               )
-                            : const Icon(Icons.send_rounded, size: 18),
-                        label: const Text('发送'),
+                            : const Icon(Icons.send_rounded),
                       ),
                     ],
                   ),

@@ -20,8 +20,34 @@ part '../features/messages/widgets/notice_card.dart';
 ///
 /// 真实入口：home.php?mod=space&do=notice&view=...&type=...&mobile=2
 /// 「我的帖子」「坛友互动」存在二级 type，其余两个分类直接读取 view。
+///
+/// 两种形态：
+/// - **专注模式**（[NoticePage.focus]）：锁定单一 view+type 的纯列表页，
+///   无 Tab、无分类条——用于消息主页的"帖子回复"/"@我"直达入口。
+/// - **分类中心模式**（默认构造）：完整 TabBar + 分类条。已提升为消息
+///   主页一级入口的类型（帖子/@我）从分类列表中隐藏，避免重复；
+///   通过 [showAllSections] = true 可恢复完整分类（预留）。
 class NoticePage extends StatefulWidget {
-  const NoticePage({super.key});
+  /// 初始定位的分类（view）与二级类型（type），用于消息主页直达入口。
+  final String? initialView;
+  final String? initialType;
+
+  /// 专注模式：锁定该 view+type，直接渲染单类列表。
+  final bool focus;
+
+  /// 专注模式的页面标题（如"帖子回复"/"@我"）。
+  final String? focusTitle;
+
+  const NoticePage({super.key, this.initialView, this.initialType})
+      : focus = false,
+        focusTitle = null;
+
+  const NoticePage.focus({
+    super.key,
+    required String this.initialView,
+    required String this.initialType,
+    required String this.focusTitle,
+  })  : focus = true;
 
   @override
   State<NoticePage> createState() => _NoticePageState();
@@ -40,12 +66,12 @@ class _NoticePageState extends State<NoticePage>
       view: 'mypost',
       icon: Icons.article_outlined,
       subtypes: [
-        _NoticeSubtype('帖子', 'post'),
+        // "帖子(post)"与"@我(at)"已提升为消息主页一级入口
+        // （NoticePage.focus 直达），分类中心里不再重复展示。
         _NoticeSubtype('点评', 'pcomment'),
         _NoticeSubtype('活动', 'activity'),
         _NoticeSubtype('悬赏', 'reward'),
         _NoticeSubtype('商品', 'goods'),
-        _NoticeSubtype('@我', 'at'),
       ],
     ),
     _NoticeSection(
@@ -74,7 +100,12 @@ class _NoticePageState extends State<NoticePage>
   ];
 
   int _sectionIndex = 0;
-  String? _type = _sections.first.subtypes.first.type;
+  String? _type = _sections.first.subtypes.isEmpty
+      ? null
+      : _sections.first.subtypes.first.type;
+
+  /// 专注模式下的 view（与 _type 一起锁定单一分类）。
+  String? _focusView;
   List<NoticeItem> _items = const [];
   final Map<String, Post> _replyPreviews = {};
   final Set<String> _ignoredNoticeKeys = <String>{};
@@ -87,12 +118,61 @@ class _NoticePageState extends State<NoticePage>
   int _generation = 0;
   String? _error;
 
+  /// 当前生效的 view（专注模式取 _focusView，否则取 section）。
+  String get _activeView =>
+      widget.focus ? (_focusView ?? 'mypost') : _section.view;
+
+  /// 当前列表对应的分类标题（专注模式用 focusTitle）。
+  String get _activeLabel =>
+      widget.focus ? (widget.focusTitle ?? '通知') : _section.label;
+
   _NoticeSection get _section => _sections[_sectionIndex];
 
   @override
   void initState() {
     super.initState();
+    // 专注模式：锁定 view+type，TabBar 不渲染。
+    if (widget.focus) {
+      _sectionIndex = -1;
+      _type = widget.initialType;
+      _focusView = widget.initialView;
+      _scrollController.addListener(_handleScroll);
+      _commentFilter.addListener(_handleFilterChanged);
+      _initialize();
+      return;
+    }
+    // 直达入口定位：先匹配 view（section），再匹配 type（subtype）。
+    var sectionIndex = 0;
+    String? type = _sections.first.subtypes.isEmpty
+        ? null
+        : _sections.first.subtypes.first.type;
+    if (widget.initialView != null) {
+      final index = _sections.indexWhere(
+        (section) => section.view == widget.initialView,
+      );
+      if (index >= 0) {
+        sectionIndex = index;
+        final section = _sections[index];
+        if (widget.initialType != null) {
+          final subtypeMatch = section.subtypes
+              .where((subtype) => subtype.type == widget.initialType)
+              .toList(growable: false);
+          type = subtypeMatch.isEmpty
+              ? (section.subtypes.isEmpty
+                  ? null
+                  : section.subtypes.first.type)
+              : subtypeMatch.first.type;
+        } else {
+          type = section.subtypes.isEmpty
+              ? null
+              : section.subtypes.first.type;
+        }
+      }
+    }
+    _sectionIndex = sectionIndex;
+    _type = type;
     _tabController = TabController(length: _sections.length, vsync: this);
+    _tabController.index = sectionIndex;
     _tabController.addListener(_handleTabChange);
     _scrollController.addListener(_handleScroll);
     _commentFilter.addListener(_handleFilterChanged);
@@ -102,8 +182,10 @@ class _NoticePageState extends State<NoticePage>
   @override
   void dispose() {
     _generation++;
-    _tabController.removeListener(_handleTabChange);
-    _tabController.dispose();
+    if (!widget.focus) {
+      _tabController.removeListener(_handleTabChange);
+      _tabController.dispose();
+    }
     _scrollController.removeListener(_handleScroll);
     _scrollController.dispose();
     _commentFilter.removeListener(_handleFilterChanged);
@@ -165,9 +247,9 @@ class _NoticePageState extends State<NoticePage>
   List<NoticeItem> get _filteredOutItems => _items
       .where((item) => !_isLocallyIgnored(item))
       .where(
-        (item) => _shouldHideNotice(
+        (item) => !_shouldHideNotice(
           item,
-          view: _section.view,
+          view: _activeView,
           type: _type,
         ),
       )
@@ -180,7 +262,7 @@ class _NoticePageState extends State<NoticePage>
         .where(
           (item) => !_shouldHideNotice(
             item,
-            view: _section.view,
+            view: _activeView,
             type: _type,
           ),
         )
@@ -233,7 +315,7 @@ class _NoticePageState extends State<NoticePage>
 
   Future<void> _reload() async {
     final generation = ++_generation;
-    final requestedView = _section.view;
+    final requestedView = _activeView;
     final requestedType = _type;
 
     if (!_api.isLoggedIn) {
@@ -274,7 +356,7 @@ class _NoticePageState extends State<NoticePage>
       );
       if (!mounted ||
           generation != _generation ||
-          _section.view != requestedView ||
+          _activeView != requestedView ||
           _type != requestedType) {
         return;
       }
@@ -306,7 +388,7 @@ class _NoticePageState extends State<NoticePage>
     if (_loading || _loadingMore || !_hasMore) return;
 
     final generation = _generation;
-    final requestedView = _section.view;
+    final requestedView = _activeView;
     final requestedType = _type;
     final nextPage = _page + 1;
     var loadSucceeded = false;
@@ -320,7 +402,7 @@ class _NoticePageState extends State<NoticePage>
       );
       if (!mounted ||
           generation != _generation ||
-          _section.view != requestedView ||
+          _activeView != requestedView ||
           _type != requestedType) {
         return;
       }
@@ -545,9 +627,31 @@ class _NoticePageState extends State<NoticePage>
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
+    // 专注模式：单类列表页——无 Tab、无分类条，只有标题 + 刷新。
+    if (widget.focus) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(widget.focusTitle ?? '通知'),
+          actions: [
+            IconButton(
+              tooltip: '刷新',
+              onPressed: _loading ? null : _reload,
+              icon: const Icon(Icons.refresh_rounded),
+            ),
+          ],
+        ),
+        body: Column(
+          children: [
+            if (_filteredOutItems.isNotEmpty) _buildFilteredRow(colors),
+            Expanded(child: _buildBody()),
+          ],
+        ),
+      );
+    }
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('论坛通知'),
+        title: const Text('更多通知'),
         actions: [
           IconButton(
             tooltip: '刷新',
@@ -556,7 +660,7 @@ class _NoticePageState extends State<NoticePage>
           ),
         ],
         bottom: PreferredSize(
-          preferredSize: const Size.fromHeight(72),
+          preferredSize: const Size.fromHeight(48),
           child: TabBar(
             controller: _tabController,
             isScrollable: false,
@@ -564,11 +668,7 @@ class _NoticePageState extends State<NoticePage>
             indicatorSize: TabBarIndicatorSize.label,
             tabs: [
               for (final section in _sections)
-                Tab(
-                  height: 68,
-                  icon: Icon(section.icon, size: 21),
-                  text: section.label,
-                ),
+                Tab(height: 46, text: section.label),
             ],
           ),
         ),
@@ -598,44 +698,52 @@ class _NoticePageState extends State<NoticePage>
                 ),
               ),
             ),
-          if (_filteredOutItems.isNotEmpty)
-            Material(
-              color: colors.surfaceContainerLow,
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 7, 10, 7),
-                child: Row(
-                  children: [
-                    Icon(
-                      Icons.filter_alt_outlined,
-                      size: 19,
-                      color: colors.primary,
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: Text(
-                        _showFilteredNotices
-                            ? '正在查看 ${_filteredOutItems.length} 条已过滤回复'
-                            : '已过滤 ${_filteredOutItems.length} 条回复通知'
-                                '${_totalPages > 1 ? ' · 已加载 $_page/$_totalPages 页' : ''}',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
-                    TextButton(
-                      onPressed: () {
-                        setState(() {
-                          _showFilteredNotices = !_showFilteredNotices;
-                        });
-                        if (_scrollController.hasClients) {
-                          _scrollController.jumpTo(0);
-                        }
-                      },
-                      child: Text(_showFilteredNotices ? '返回通知' : '查看'),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+          if (_filteredOutItems.isNotEmpty) _buildFilteredRow(colors),
           Expanded(child: _buildBody()),
+        ],
+      ),
+    );
+  }
+
+  /// 已过滤提示行（正文与列表之间，细线分隔）。
+  Widget _buildFilteredRow(ColorScheme colors) {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 7, 10, 7),
+      decoration: BoxDecoration(
+        border: Border(
+          bottom: BorderSide(
+            color: colors.outlineVariant.withValues(alpha: 0.45),
+          ),
+        ),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.filter_alt_outlined,
+            size: 19,
+            color: colors.onSurfaceVariant,
+          ),
+          const SizedBox(width: 8),
+          Expanded(
+            child: Text(
+              _showFilteredNotices
+                  ? '正在查看 ${_filteredOutItems.length} 条已过滤回复'
+                  : '已过滤 ${_filteredOutItems.length} 条回复通知'
+                      '${_totalPages > 1 ? ' · 已加载 $_page/$_totalPages 页' : ''}',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              setState(() {
+                _showFilteredNotices = !_showFilteredNotices;
+              });
+              if (_scrollController.hasClients) {
+                _scrollController.jumpTo(0);
+              }
+            },
+            child: Text(_showFilteredNotices ? '返回通知' : '查看'),
+          ),
         ],
       ),
     );
@@ -687,9 +795,9 @@ class _NoticePageState extends State<NoticePage>
       child: ListView.separated(
         controller: _scrollController,
         physics: const AlwaysScrollableScrollPhysics(),
-        padding: const EdgeInsets.fromLTRB(16, 10, 16, 28),
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 28),
         itemCount: items.length + (_loadingMore ? 1 : 0),
-        separatorBuilder: (_, __) => const SizedBox(height: 8),
+        separatorBuilder: (_, __) => const SizedBox(height: 0),
         itemBuilder: (context, index) {
           if (index >= items.length) {
             return const Padding(
@@ -700,7 +808,7 @@ class _NoticePageState extends State<NoticePage>
           final item = items[index];
           return _NoticeCard(
             item: item,
-            sectionLabel: _section.label,
+            sectionLabel: _activeLabel,
             replyPreview: _replyPreviews[item.pid],
             hasLocalAction: _type == 'friend' || item.type == 'friend',
             onPokeBack: (_type == 'poke' || item.type == 'poke') &&

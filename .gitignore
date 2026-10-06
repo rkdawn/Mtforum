@@ -36,6 +36,13 @@ credentials.json
 **/GoogleService-Info.plist
 scripts/
 test/
+!/test/
+/test/*
+!/test/reply_management_test.dart
+!/test/reply_actions_test.dart
+!/test/thread_title_header_test.dart
+!/test/flat_comment_item_test.dart
+!/test/only_op_filter_test.dart
 docs/
 
 # 发布产物（由 tools/publish.py 生成后上传，不入库）

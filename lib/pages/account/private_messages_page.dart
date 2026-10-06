@@ -73,7 +73,7 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
               onRefresh: _load,
               child: ListView.builder(
                 physics: const AlwaysScrollableScrollPhysics(),
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                padding: const EdgeInsets.fromLTRB(12, 4, 12, 24),
                 itemCount: _items.isEmpty ? 1 : _items.length,
                 itemBuilder: (context, index) {
                   if (_items.isEmpty) {
@@ -93,8 +93,15 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
                   }
 
                   final item = _items[index];
-                  return Card(
-                    margin: const EdgeInsets.only(bottom: 10),
+                  // 线条风：无卡片容器，透明行 + 底部细分隔线。
+                  return Container(
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(
+                          color: colors.outlineVariant.withValues(alpha: 0.45),
+                        ),
+                      ),
+                    ),
                     child: ListTile(
                       dense: true,
                       visualDensity: const VisualDensity(vertical: -2),
@@ -162,10 +169,10 @@ class _PrivateMessagesPageState extends State<PrivateMessagesPage> {
                               _expandedPmListTime(item.lastTime!),
                               style: Theme.of(context).textTheme.labelSmall?.copyWith(
                                     color: item.hasUnread
-                                        ? colors.primary
+                                        ? colors.onSurface
                                         : colors.outline,
                                     fontWeight: item.hasUnread
-                                        ? FontWeight.w500
+                                        ? FontWeight.w600
                                         : FontWeight.normal,
                                   ),
                             )

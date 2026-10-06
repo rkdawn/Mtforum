@@ -102,10 +102,14 @@ extension ForumParserThreadDetailParserPart on ForumParser {
       final block = body.substring(start, end);
       final fragment = html_parser.parseFragment(block);
 
-      final authorEl = fragment.querySelector('.top_user');
+      final authorNode = fragment.querySelector('.top_user');
+      final authorEl = authorNode?.localName == 'a'
+          ? authorNode
+          : authorNode?.querySelector('a[href]');
       final authorHref = authorEl?.attributes['href'] ?? '';
-      final authorUid =
-          RegExp(r'uid=(\d+)').firstMatch(authorHref)?.group(1);
+      final authorUid = RegExp(r'(?:[?&]uid=|space-uid-)(\d+)')
+          .firstMatch(authorHref)
+          ?.group(1);
 
       final avatarEl = fragment.querySelector(
         'img.top_tximg, .top_tximg img, .top_tximg',
@@ -151,7 +155,7 @@ extension ForumParserThreadDetailParserPart on ForumParser {
       posts.add(Post(
         pid: pid,
         authorUid: authorUid,
-        authorName: _nullableText(authorEl?.text),
+        authorName: _nullableText(authorEl?.text ?? authorNode?.text),
         authorLevel: _nullableText(fragment.querySelector('.top_lev')?.text),
         avatarUrl: avatarUrl,
         content: parsedMessage.text,
