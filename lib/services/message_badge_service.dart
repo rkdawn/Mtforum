@@ -229,7 +229,13 @@ class MessageBadgeService extends ChangeNotifier {
     final api = ApiService.instance;
     if (!api.isLoggedIn) return const UnreadBadgeInfo.none();
     try {
-      final page = await api.getNoticePage(view: 'mypost', page: 1);
+      // 红点只统计"帖子回复"（mypost/post）：badge 挂在消息主页的
+      // 「帖子回复」入口上，@我/点评等其他分类不在此红点范围内。
+      final page = await api.getNoticePage(
+        view: 'mypost',
+        type: 'post',
+        page: 1,
+      );
       _lastNoticePoll = DateTime.now();
       final ids = page.items
           .map((item) => int.tryParse(item.id))
@@ -306,7 +312,12 @@ class MessageBadgeService extends ChangeNotifier {
     }
 
     try {
-      final page = await api.getNoticePage(view: 'mypost', page: 1);
+      // 与 _detectNoticeBadge 同口径：只按"帖子回复"清红点。
+      final page = await api.getNoticePage(
+        view: 'mypost',
+        type: 'post',
+        page: 1,
+      );
       if (page.items.isNotEmpty) {
         await markNoticesSeen(page.items);
         noticesCleared = true;

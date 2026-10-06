@@ -380,13 +380,11 @@ class _NoticePageState extends State<NoticePage>
         _totalPages = data.totalPages;
         _hasMore = data.hasMore || _page < _totalPages;
       });
-      // 推进"已见通知"水位线要谨慎：红点检测拉的是 mypost 第一页与
-      // 水位线比较（通知 ID 全局递增），若浏览坛友互动/系统等分类也推进，
-      // 会把用户还没看过的新帖子回复误标为已读。这里仅 mypost 推进。
-      if (requestedView == 'mypost') {
-        unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
-      }
+      // 推进"已见通知"水位线要谨慎：红点检测只按 mypost/post 与水位线
+      // 比较（通知 ID 全局递增），浏览其他分类或子类型都不要推进，
+      // 否则会把用户还没看过的新帖子回复误标为已读。
       if (requestedView == 'mypost' && requestedType == 'post') {
+        unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
         unawaited(_loadReplyPreviews(visibleDataItems, generation));
       }
     } catch (e) {
@@ -445,8 +443,8 @@ class _NoticePageState extends State<NoticePage>
         _hasMore = nextPage < _totalPages ||
             (addedCount > 0 && data.hasMore);
       });
-      // 同 _reload：只有 mypost 视图才推进已见水位线，避免误清帖子回复红点。
-      if (requestedView == 'mypost') {
+      // 同 _reload：只有 mypost/post 才推进已见水位线，避免误清帖子回复红点。
+      if (requestedView == 'mypost' && requestedType == 'post') {
         unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
       }
       if (requestedView == 'mypost' && requestedType == 'post') {
