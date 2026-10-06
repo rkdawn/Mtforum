@@ -16,17 +16,25 @@ import '../routes/thread_routes.dart';
 
 part '../features/messages/widgets/notice_card.dart';
 
+/// 「我的帖子」分类的子类型（帖子回复/@我已单独成入口，不再列入）。
+const _mypostSubtypes = <_NoticeSubtype>[
+  _NoticeSubtype('点评', 'pcomment'),
+  _NoticeSubtype('活动', 'activity'),
+  _NoticeSubtype('悬赏', 'reward'),
+  _NoticeSubtype('商品', 'goods'),
+];
+
 /// Discuz 论坛通知中心。
 ///
 /// 真实入口：home.php?mod=space&do=notice&view=...&type=...&mobile=2
 /// 「我的帖子」「坛友互动」存在二级 type，其余两个分类直接读取 view。
 ///
 /// 两种形态：
-/// - **专注模式**（[NoticePage.focus]）：锁定单一 view+type 的纯列表页，
-///   无 Tab、无分类条——用于消息主页的"帖子回复"/"@我"直达入口。
-/// - **分类中心模式**（默认构造）：完整 TabBar + 分类条。已提升为消息
-///   主页一级入口的类型（帖子/@我）从分类列表中隐藏，避免重复；
-///   通过 [showAllSections] = true 可恢复完整分类（预留）。
+/// - **专注模式**（[NoticePage.focus] / [NoticePage.mypost]）：锁定单一
+///   view 的列表页，无主 Tab——用于消息主页的"帖子回复"/"@我"/"我的帖子"
+///   直达入口；mypost 形态带子类型切换条（点评/活动/悬赏/商品）。
+/// - **分类中心模式**（默认构造）：完整 TabBar + 分类条。「我的帖子」与
+///   已提升的帖子/@我一样不再出现在分类列表中，避免重复。
 class NoticePage extends StatefulWidget {
   /// 初始定位的分类（view）与二级类型（type），用于消息主页直达入口。
   final String? initialView;
@@ -35,11 +43,16 @@ class NoticePage extends StatefulWidget {
   /// 专注模式：锁定该 view+type，直接渲染单类列表。
   final bool focus;
 
-  /// 专注模式的页面标题（如"帖子回复"/"@我"）。
+  /// 专注模式是否显示子类型切换条（仅「我的帖子」形态使用，
+  /// 帖子回复/@我锁定单一 type，无需切换条）。
+  final bool focusSubtypeBar;
+
+  /// 专注模式的页面标题（如"帖子回复"/"@我"/"我的帖子"）。
   final String? focusTitle;
 
   const NoticePage({super.key, this.initialView, this.initialType})
       : focus = false,
+        focusSubtypeBar = false,
         focusTitle = null;
 
   const NoticePage.focus({
@@ -47,7 +60,16 @@ class NoticePage extends StatefulWidget {
     required String this.initialView,
     required String this.initialType,
     required String this.focusTitle,
-  })  : focus = true;
+  })  : focus = true,
+        focusSubtypeBar = false;
+
+  /// 「我的帖子」专注形态：mypost 下除帖子回复/@我外的子类型
+  /// （点评/活动/悬赏/商品），带子类型切换条。
+  const NoticePage.mypost({super.key, this.focusTitle = '我的帖子'})
+      : focus = true,
+        focusSubtypeBar = true,
+        initialView = 'mypost',
+        initialType = null;
 
   @override
   State<NoticePage> createState() => _NoticePageState();
@@ -61,19 +83,8 @@ class _NoticePageState extends State<NoticePage>
   late final TabController _tabController;
 
   static const _sections = <_NoticeSection>[
-    _NoticeSection(
-      label: '我的帖子',
-      view: 'mypost',
-      icon: Icons.article_outlined,
-      subtypes: [
-        // "帖子(post)"与"@我(at)"已提升为消息主页一级入口
-        // （NoticePage.focus 直达），分类中心里不再重复展示。
-        _NoticeSubtype('点评', 'pcomment'),
-        _NoticeSubtype('活动', 'activity'),
-        _NoticeSubtype('悬赏', 'reward'),
-        _NoticeSubtype('商品', 'goods'),
-      ],
-    ),
+    // 「我的帖子」整体已提升为消息主页一级入口（NoticePage.mypost，
+    // 帖子回复/@我则走 NoticePage.focus 直达），分类中心不再重复展示。
     _NoticeSection(
       label: '坛友互动',
       view: 'interactive',
@@ -131,10 +142,10 @@ class _NoticePageState extends State<NoticePage>
   @override
   void initState() {
     super.initState();
-    // 专注模式：锁定 view+type，TabBar 不渲染。
+    // 专注模式：锁定 view，TabBar 不渲染。
     if (widget.focus) {
       _sectionIndex = -1;
-      _type = widget.initialType;
+      _type = widget.initialType ?? _mypostSubtypes.first.type;
       _focusView = widget.initialView;
       _scrollController.addListener(_handleScroll);
       _commentFilter.addListener(_handleFilterChanged);
@@ -369,7 +380,12 @@ class _NoticePageState extends State<NoticePage>
         _totalPages = data.totalPages;
         _hasMore = data.hasMore || _page < _totalPages;
       });
-      unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
+      // 推进"已见通知"水位线要谨慎：红点检测拉的是 mypost 第一页与
+      // 水位线比较（通知 ID 全局递增），若浏览坛友互动/系统等分类也推进，
+      // 会把用户还没看过的新帖子回复误标为已读。这里仅 mypost 推进。
+      if (requestedView == 'mypost') {
+        unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
+      }
       if (requestedView == 'mypost' && requestedType == 'post') {
         unawaited(_loadReplyPreviews(visibleDataItems, generation));
       }
@@ -429,7 +445,10 @@ class _NoticePageState extends State<NoticePage>
         _hasMore = nextPage < _totalPages ||
             (addedCount > 0 && data.hasMore);
       });
-      unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
+      // 同 _reload：只有 mypost 视图才推进已见水位线，避免误清帖子回复红点。
+      if (requestedView == 'mypost') {
+        unawaited(MessageBadgeService.instance.markNoticesSeen(data.items));
+      }
       if (requestedView == 'mypost' && requestedType == 'post') {
         unawaited(_loadReplyPreviews(pageItems, generation));
       }
@@ -627,7 +646,7 @@ class _NoticePageState extends State<NoticePage>
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
 
-    // 专注模式：单类列表页——无 Tab、无分类条，只有标题 + 刷新。
+    // 专注模式：单类列表页——无主 Tab，「我的帖子」形态带子类型切换条。
     if (widget.focus) {
       return Scaffold(
         appBar: AppBar(
@@ -642,6 +661,29 @@ class _NoticePageState extends State<NoticePage>
         ),
         body: Column(
           children: [
+            if (widget.focusSubtypeBar)
+              Material(
+                color: colors.surface,
+                child: SizedBox(
+                  height: 50,
+                  child: ListView.separated(
+                    padding: const EdgeInsets.fromLTRB(16, 7, 16, 6),
+                    scrollDirection: Axis.horizontal,
+                    itemCount: _mypostSubtypes.length,
+                    separatorBuilder: (_, __) => const SizedBox(width: 7),
+                    itemBuilder: (context, index) {
+                      final subtype = _mypostSubtypes[index];
+                      return FilterChip(
+                        label: Text(subtype.label),
+                        selected: _type == subtype.type,
+                        visualDensity: VisualDensity.compact,
+                        showCheckmark: true,
+                        onSelected: (_) => _selectSubtype(subtype.type),
+                      );
+                    },
+                  ),
+                ),
+              ),
             if (_filteredOutItems.isNotEmpty) _buildFilteredRow(colors),
             Expanded(child: _buildBody()),
           ],

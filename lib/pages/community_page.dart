@@ -383,9 +383,7 @@ class _ForumThreadsPageState extends State<ForumThreadsPage> {
 
     if (!mounted || result == null || !result.success) return;
 
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(result.message)),
-    );
+    // 发布成功后直接进入新帖，不再弹「主题发布成功」提示条。
     await _loadFirst();
     if (!mounted) return;
 

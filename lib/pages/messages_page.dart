@@ -126,6 +126,8 @@ class _MessagesPageState extends State<MessagesPage> {
                         icon: Icons.article_outlined,
                         title: '帖子回复',
                         subtitle: '我的帖子收到的新回复',
+                        // 未读检测拉的就是 mypost/post 第一页，badge 语义对应。
+                        badge: summary.notices.label,
                         onTap: () => _open(const NoticePage.focus(
                           initialView: 'mypost',
                           initialType: 'post',
@@ -141,6 +143,12 @@ class _MessagesPageState extends State<MessagesPage> {
                           initialType: 'at',
                           focusTitle: '@我',
                         )),
+                      ),
+                      _MessageEntryCard(
+                        icon: Icons.library_books_outlined,
+                        title: '我的帖子',
+                        subtitle: '点评、活动、悬赏与商品提醒',
+                        onTap: () => _open(const NoticePage.mypost()),
                       ),
                       _MessageEntryCard(
                         icon: Icons.chat_bubble_outline_rounded,
@@ -161,8 +169,7 @@ class _MessagesPageState extends State<MessagesPage> {
                       _MessageEntryCard(
                         icon: Icons.notifications_none_rounded,
                         title: '更多通知',
-                        subtitle: '点评、互动、系统与应用提醒',
-                        badge: summary.notices.label,
+                        subtitle: '坛友互动、系统与应用提醒',
                         onTap: () => _open(const NoticePage()),
                       ),
                       if (!_api.isLoggedIn) ...[

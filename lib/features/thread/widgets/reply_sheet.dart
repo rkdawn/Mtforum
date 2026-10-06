@@ -144,10 +144,7 @@ class _ReplySheetState extends State<_ReplySheet> {
       if (result.success) {
         widget.onReplied();
         Navigator.pop(context);
-        // 黑白风：成功提示走默认 inverseSurface 底，不再用绿色。
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('回复成功')),
-        );
+        // 回复成功由列表刷新直接体现，不再弹提示条。
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

@@ -817,9 +817,7 @@ class _CommentsSheetState extends State<_CommentsSheet> {
       }
       if (!mounted) return;
       setState(() {});
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('评论成功')),
-      );
+      // 评论成功由列表刷新直接体现，不再弹提示条。
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
